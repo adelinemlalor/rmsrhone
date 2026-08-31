@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useChecklist, useDeleteTask, useSaveTask, useTravelers } from "@/lib/data";
+import {
+  useChecklist,
+  useDeleteChecklistItem,
+  useSaveChecklistItem,
+  useTravelers,
+} from "@/lib/data";
 import { EmptyState, Meter, Panel, SectionLabel } from "@/components/bits";
-import { CHECKLIST_CATEGORIES } from "@/lib/travel";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/trips/$tripId/checklist")({
@@ -19,6 +23,8 @@ export const Route = createFileRoute("/_authenticated/trips/$tripId/checklist")(
   component: ChecklistPage,
 });
 
+const SECTIONS = ["Before you go", "Packing", "On arrival", "Bookings"];
+
 const field =
   "w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[14px] outline-none focus:border-brand";
 
@@ -26,22 +32,26 @@ function ChecklistPage() {
   const { tripId } = Route.useParams();
   const { data: tasks } = useChecklist(tripId);
   const { data: travelers } = useTravelers(tripId);
-  const save = useSaveTask(tripId);
-  const remove = useDeleteTask(tripId);
+  const save = useSaveChecklistItem(tripId);
+  const remove = useDeleteChecklistItem(tripId);
 
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState(CHECKLIST_CATEGORIES[0] ?? "Before you go");
+  const [section, setSection] = useState(SECTIONS[0] as string);
   const [assignee, setAssignee] = useState("");
 
-  const all = tasks ?? [];
-  const done = all.filter((t) => t.done).length;
+  const all = useMemo(() => tasks ?? [], [tasks]);
+  const done = all.filter((t) => t.completed).length;
+  const sections = useMemo(() => {
+    const found = [...new Set(all.map((t) => t.section))];
+    return [...SECTIONS.filter((s) => found.includes(s)), ...found.filter((s) => !SECTIONS.includes(s))];
+  }, [all]);
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
       <div className="space-y-5">
         <Panel>
           <SectionLabel>Progress</SectionLabel>
-          <Meter label={`${done} of ${all.length} done`} value={done} max={all.length || 1} />
+          <Meter label={`${done} of ${all.length} done`} value={done} total={all.length || 1} />
         </Panel>
 
         {all.length === 0 ? (
@@ -50,37 +60,37 @@ function ChecklistPage() {
             description="Add the visas, vaccinations, packing and pet-sitting tasks you don't want to forget."
           />
         ) : (
-          CHECKLIST_CATEGORIES.filter((c) => all.some((t) => t.category === c)).map((c) => (
-            <Panel key={c}>
-              <SectionLabel>{c}</SectionLabel>
+          sections.map((s) => (
+            <Panel key={s}>
+              <SectionLabel>{s}</SectionLabel>
               <ul className="space-y-2">
                 {all
-                  .filter((t) => t.category === c)
+                  .filter((t) => t.section === s)
                   .map((t) => (
                     <li key={t.id} className="flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => save.mutate({ id: t.id, done: !t.done })}
-                        aria-label={t.done ? "Mark not done" : "Mark done"}
+                        onClick={() => save.mutate({ id: t.id, completed: !t.completed })}
+                        aria-label={t.completed ? "Mark not done" : "Mark done"}
                         className={cn(
                           "grid size-5 shrink-0 place-items-center rounded-md border text-[11px] font-bold",
-                          t.done
+                          t.completed
                             ? "border-accent bg-accent text-cream"
                             : "border-ink/25 bg-white",
                         )}
                       >
-                        {t.done ? "✓" : ""}
+                        {t.completed ? "✓" : ""}
                       </button>
                       <span
                         className={cn(
                           "flex-1 text-[14px]",
-                          t.done && "text-ink/35 line-through",
+                          t.completed && "text-ink/35 line-through",
                         )}
                       >
                         {t.title}
                       </span>
-                      {t.assignee ? (
-                        <span className="text-[11px] font-bold text-ink/40">{t.assignee}</span>
+                      {t.assigned_to ? (
+                        <span className="text-[11px] font-bold text-ink/40">{t.assigned_to}</span>
                       ) : null}
                       <button
                         type="button"
@@ -106,9 +116,9 @@ function ChecklistPage() {
             placeholder="What needs doing?"
             className={field}
           />
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className={field}>
-            {CHECKLIST_CATEGORIES.map((c) => (
-              <option key={c}>{c}</option>
+          <select value={section} onChange={(e) => setSection(e.target.value)} className={field}>
+            {SECTIONS.map((s) => (
+              <option key={s}>{s}</option>
             ))}
           </select>
           <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={field}>
@@ -125,9 +135,9 @@ function ChecklistPage() {
               if (!title.trim()) return;
               await save.mutateAsync({
                 title: title.trim(),
-                category,
-                assignee: assignee || null,
-                done: false,
+                section,
+                assigned_to: assignee || null,
+                completed: false,
               });
               setTitle("");
             }}
