@@ -52,39 +52,6 @@ function SettingsPage() {
         </dl>
       </Panel>
 
-      <Panel className="mt-5">
-        <SectionLabel>Password</SectionLabel>
-        <p className="text-[13px] text-ink/55">
-          We'll email you a secure link to choose a new password.
-        </p>
-        <button
-          type="button"
-          onClick={async () => {
-            const { error } = await supabase.auth.resetPasswordForEmail(user.email ?? "", {
-              redirectTo: window.location.origin,
-            });
-            if (error) toast.error(error.message);
-            else toast.success("Reset link sent");
-          }}
-          className="mt-4 rounded-full border border-border px-5 py-2.5 text-[13px] font-bold"
-        >
-          Send reset link
-        </button>
-      </Panel>
-
-      <Panel className="mt-5">
-        <SectionLabel>Session</SectionLabel>
-        <button
-          type="button"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            void navigate({ to: "/auth" });
-          }}
-          className="rounded-full bg-ink px-5 py-2.5 text-[13px] font-bold text-cream"
-        >
-          Sign out
-        </button>
-      </Panel>
     </div>
   );
 }
