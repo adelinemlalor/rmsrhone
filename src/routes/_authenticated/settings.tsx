@@ -1,6 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { createFileRoute } from "@tanstack/react-router";
 import { Panel, SectionLabel } from "@/components/bits";
 import { useTrips } from "@/lib/data";
 
@@ -23,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const { user } = Route.useRouteContext();
-  const navigate = useNavigate();
+  
   const { data: trips } = useTrips();
 
   return (
@@ -52,39 +50,6 @@ function SettingsPage() {
         </dl>
       </Panel>
 
-      <Panel className="mt-5">
-        <SectionLabel>Password</SectionLabel>
-        <p className="text-[13px] text-ink/55">
-          We'll email you a secure link to choose a new password.
-        </p>
-        <button
-          type="button"
-          onClick={async () => {
-            const { error } = await supabase.auth.resetPasswordForEmail(user.email ?? "", {
-              redirectTo: window.location.origin,
-            });
-            if (error) toast.error(error.message);
-            else toast.success("Reset link sent");
-          }}
-          className="mt-4 rounded-full border border-border px-5 py-2.5 text-[13px] font-bold"
-        >
-          Send reset link
-        </button>
-      </Panel>
-
-      <Panel className="mt-5">
-        <SectionLabel>Session</SectionLabel>
-        <button
-          type="button"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            void navigate({ to: "/auth" });
-          }}
-          className="rounded-full bg-ink px-5 py-2.5 text-[13px] font-bold text-cream"
-        >
-          Sign out
-        </button>
-      </Panel>
     </div>
   );
 }

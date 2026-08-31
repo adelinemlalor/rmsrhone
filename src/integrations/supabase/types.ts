@@ -603,11 +603,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_edit_trip: { Args: { _trip: string; _uid: string }; Returns: boolean }
-      is_trip_member: {
-        Args: { _trip: string; _uid: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

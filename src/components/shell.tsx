@@ -1,5 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -17,7 +16,6 @@ export function AppShell({
   children: React.ReactNode;
   initials: string;
 }) {
-  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-cream text-ink">
       <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6 lg:px-10">
@@ -56,17 +54,13 @@ export function AppShell({
             >
               + New trip
             </Link>
-            <button
-              type="button"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                void navigate({ to: "/auth" });
-              }}
-              title="Sign out"
+            <Link
+              to="/profile"
+              title="Traveler profile"
               className="grid size-9 place-items-center rounded-full bg-accent text-[12px] font-bold text-cream"
             >
               {initials || "··"}
-            </button>
+            </Link>
           </div>
         </header>
 

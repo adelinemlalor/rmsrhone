@@ -58,10 +58,10 @@ function Landing() {
             <span className="font-display text-[15px] font-extrabold tracking-tight">Wayfarer</span>
           </div>
           <Link
-            to="/auth"
+            to="/trips"
             className="rounded-full bg-ink px-5 py-2.5 text-[13px] font-bold text-cream"
           >
-            Sign in
+            Open planner
           </Link>
         </header>
 
@@ -82,13 +82,13 @@ function Landing() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                to="/auth"
+                to="/trips"
                 className="rounded-full bg-brand px-6 py-3 text-[14px] font-bold text-cream transition-opacity hover:opacity-90"
               >
-                Start planning free
+                Start planning
               </Link>
               <span className="text-[13px] text-ink/45">
-                A sample trip is waiting in your account.
+                No account needed — a sample trip is already waiting.
               </span>
             </div>
           </div>
