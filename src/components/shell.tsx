@@ -1,5 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 const NAV = [
