@@ -467,20 +467,27 @@ export function computeBalances(items: AgendaItem[]): Balance[] {
       net.set(payer, (net.get(payer) ?? 0) + share);
     }
   }
-  const creditors = [...net.entries()].filter(([, v]) => v > 0.01).sort((a, b) => b[1] - a[1]);
-  const debtors = [...net.entries()].filter(([, v]) => v < -0.01).sort((a, b) => a[1] - b[1]);
+  const creditors = [...net.entries()]
+    .filter(([, v]) => v > 0.01)
+    .map(([name, amount]) => ({ name, amount }))
+    .sort((a, b) => b.amount - a.amount);
+  const debtors = [...net.entries()]
+    .filter(([, v]) => v < -0.01)
+    .map(([name, amount]) => ({ name, amount: -amount }))
+    .sort((a, b) => b.amount - a.amount);
   const out: Balance[] = [];
   let ci = 0;
   let di = 0;
   while (ci < creditors.length && di < debtors.length) {
-    const [cName, cAmt] = creditors[ci];
-    const [dName, dAmt] = debtors[di];
-    const amount = Math.min(cAmt, -dAmt);
-    out.push({ from: dName, to: cName, amount: Math.round(amount * 100) / 100 });
-    creditors[ci][1] = cAmt - amount;
-    debtors[di][1] = dAmt + amount;
-    if (creditors[ci][1] <= 0.01) ci++;
-    if (debtors[di][1] >= -0.01) di++;
+    const creditor = creditors[ci];
+    const debtor = debtors[di];
+    if (!creditor || !debtor) break;
+    const amount = Math.min(creditor.amount, debtor.amount);
+    out.push({ from: debtor.name, to: creditor.name, amount: Math.round(amount * 100) / 100 });
+    creditor.amount -= amount;
+    debtor.amount -= amount;
+    if (creditor.amount <= 0.01) ci++;
+    if (debtor.amount <= 0.01) di++;
   }
   return out;
 }
