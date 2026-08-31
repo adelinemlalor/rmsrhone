@@ -21,6 +21,7 @@ import { Route as AuthenticatedTripsTripIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedTripsNewRouteImport } from './routes/_authenticated/trips.new'
 import { Route as AuthenticatedTripsTripIdIndexRouteImport } from './routes/_authenticated/trips.$tripId.index'
 import { Route as AuthenticatedTripsTripIdItineraryRouteImport } from './routes/_authenticated/trips.$tripId.itinerary'
+import { Route as AuthenticatedTripsTripIdDayDateRouteImport } from './routes/_authenticated/trips.$tripId.day.$date'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,12 @@ const AuthenticatedTripsTripIdItineraryRoute =
     path: '/itinerary',
     getParentRoute: () => AuthenticatedTripsTripIdRoute,
   } as any)
+const AuthenticatedTripsTripIdDayDateRoute =
+  AuthenticatedTripsTripIdDayDateRouteImport.update({
+    id: '/day/$date',
+    path: '/day/$date',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/trips/': typeof AuthenticatedTripsIndexRoute
   '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
   '/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
+  '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/trips': typeof AuthenticatedTripsIndexRoute
   '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
   '/trips/$tripId': typeof AuthenticatedTripsTripIdIndexRoute
+  '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/_authenticated/trips/': typeof AuthenticatedTripsIndexRoute
   '/_authenticated/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
   '/_authenticated/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
+  '/_authenticated/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/trips/'
     | '/trips/$tripId/itinerary'
     | '/trips/$tripId/'
+    | '/trips/$tripId/day/$date'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/trips'
     | '/trips/$tripId/itinerary'
     | '/trips/$tripId'
+    | '/trips/$tripId/day/$date'
   id:
     | '__root__'
     | '/'
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trips/'
     | '/_authenticated/trips/$tripId/itinerary'
     | '/_authenticated/trips/$tripId/'
+    | '/_authenticated/trips/$tripId/day/$date'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -259,12 +272,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsTripIdItineraryRouteImport
       parentRoute: typeof AuthenticatedTripsTripIdRoute
     }
+    '/_authenticated/trips/$tripId/day/$date': {
+      id: '/_authenticated/trips/$tripId/day/$date'
+      path: '/day/$date'
+      fullPath: '/trips/$tripId/day/$date'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdDayDateRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
   }
 }
 
 interface AuthenticatedTripsTripIdRouteChildren {
   AuthenticatedTripsTripIdItineraryRoute: typeof AuthenticatedTripsTripIdItineraryRoute
   AuthenticatedTripsTripIdIndexRoute: typeof AuthenticatedTripsTripIdIndexRoute
+  AuthenticatedTripsTripIdDayDateRoute: typeof AuthenticatedTripsTripIdDayDateRoute
 }
 
 const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildren =
@@ -272,6 +293,7 @@ const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildr
     AuthenticatedTripsTripIdItineraryRoute:
       AuthenticatedTripsTripIdItineraryRoute,
     AuthenticatedTripsTripIdIndexRoute: AuthenticatedTripsTripIdIndexRoute,
+    AuthenticatedTripsTripIdDayDateRoute: AuthenticatedTripsTripIdDayDateRoute,
   }
 
 const AuthenticatedTripsTripIdRouteWithChildren =
