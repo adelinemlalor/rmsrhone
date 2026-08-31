@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedSharedRouteImport } from './routes/_authenticated/shared'
 import { Route as AuthenticatedTripsIndexRouteImport } from './routes/_authenticated/trips.index'
 import { Route as AuthenticatedTripsNewRouteImport } from './routes/_authenticated/trips.new'
@@ -36,6 +37,11 @@ const AuthenticatedExploreRoute = AuthenticatedExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSharedRoute = AuthenticatedSharedRouteImport.update({
   id: '/shared',
   path: '/shared',
@@ -56,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/explore': typeof AuthenticatedExploreRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/shared': typeof AuthenticatedSharedRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
   '/trips/': typeof AuthenticatedTripsIndexRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/explore': typeof AuthenticatedExploreRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/shared': typeof AuthenticatedSharedRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
   '/trips': typeof AuthenticatedTripsIndexRoute
@@ -74,21 +82,37 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/shared': typeof AuthenticatedSharedRoute
   '/_authenticated/trips/new': typeof AuthenticatedTripsNewRoute
   '/_authenticated/trips/': typeof AuthenticatedTripsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/explore' | '/shared' | '/trips/new' | '/trips/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/explore'
+    | '/profile'
+    | '/shared'
+    | '/trips/new'
+    | '/trips/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/explore' | '/shared' | '/trips/new' | '/trips'
+  to:
+    | '/'
+    | '/auth'
+    | '/explore'
+    | '/profile'
+    | '/shared'
+    | '/trips/new'
+    | '/trips'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/explore'
+    | '/_authenticated/profile'
     | '/_authenticated/shared'
     | '/_authenticated/trips/new'
     | '/_authenticated/trips/'
@@ -130,6 +154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExploreRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/shared': {
       id: '/_authenticated/shared'
       path: '/shared'
@@ -156,6 +187,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSharedRoute: typeof AuthenticatedSharedRoute
   AuthenticatedTripsNewRoute: typeof AuthenticatedTripsNewRoute
   AuthenticatedTripsIndexRoute: typeof AuthenticatedTripsIndexRoute
@@ -163,6 +195,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSharedRoute: AuthenticatedSharedRoute,
   AuthenticatedTripsNewRoute: AuthenticatedTripsNewRoute,
   AuthenticatedTripsIndexRoute: AuthenticatedTripsIndexRoute,

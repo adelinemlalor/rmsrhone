@@ -72,7 +72,11 @@ function ProfilePage() {
     setSaving(true);
     const payload: Record<string, string | null> = {};
     for (const f of FIELDS) payload[f.key] = form[f.key]?.trim() ? form[f.key]! : null;
-    const { error } = await supabase.from("profiles").update(payload).eq("id", user.id);
+    const { error } = await supabase
+      .from("profiles")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .update(payload as any)
+      .eq("id", user.id);
     setSaving(false);
     if (error) {
       toast.error(error.message);
