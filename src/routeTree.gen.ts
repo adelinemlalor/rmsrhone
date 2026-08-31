@@ -21,6 +21,7 @@ import { Route as AuthenticatedTripsTripIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedTripsNewRouteImport } from './routes/_authenticated/trips.new'
 import { Route as AuthenticatedTripsTripIdIndexRouteImport } from './routes/_authenticated/trips.$tripId.index'
 import { Route as AuthenticatedTripsTripIdItineraryRouteImport } from './routes/_authenticated/trips.$tripId.itinerary'
+import { Route as AuthenticatedTripsTripIdSavedRouteImport } from './routes/_authenticated/trips.$tripId.saved'
 import { Route as AuthenticatedTripsTripIdDayDateRouteImport } from './routes/_authenticated/trips.$tripId.day.$date'
 
 const IndexRoute = IndexRouteImport.update({
@@ -85,6 +86,12 @@ const AuthenticatedTripsTripIdItineraryRoute =
     path: '/itinerary',
     getParentRoute: () => AuthenticatedTripsTripIdRoute,
   } as any)
+const AuthenticatedTripsTripIdSavedRoute =
+  AuthenticatedTripsTripIdSavedRouteImport.update({
+    id: '/saved',
+    path: '/saved',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
 const AuthenticatedTripsTripIdDayDateRoute =
   AuthenticatedTripsTripIdDayDateRouteImport.update({
     id: '/day/$date',
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/trips/new': typeof AuthenticatedTripsNewRoute
   '/trips/': typeof AuthenticatedTripsIndexRoute
   '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
   '/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
   '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
@@ -116,6 +124,7 @@ export interface FileRoutesByTo {
   '/trips/new': typeof AuthenticatedTripsNewRoute
   '/trips': typeof AuthenticatedTripsIndexRoute
   '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
   '/trips/$tripId': typeof AuthenticatedTripsTripIdIndexRoute
   '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
@@ -132,6 +141,7 @@ export interface FileRoutesById {
   '/_authenticated/trips/new': typeof AuthenticatedTripsNewRoute
   '/_authenticated/trips/': typeof AuthenticatedTripsIndexRoute
   '/_authenticated/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/_authenticated/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
   '/_authenticated/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
   '/_authenticated/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/trips/new'
     | '/trips/'
     | '/trips/$tripId/itinerary'
+    | '/trips/$tripId/saved'
     | '/trips/$tripId/'
     | '/trips/$tripId/day/$date'
   fileRoutesByTo: FileRoutesByTo
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/trips/new'
     | '/trips'
     | '/trips/$tripId/itinerary'
+    | '/trips/$tripId/saved'
     | '/trips/$tripId'
     | '/trips/$tripId/day/$date'
   id:
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trips/new'
     | '/_authenticated/trips/'
     | '/_authenticated/trips/$tripId/itinerary'
+    | '/_authenticated/trips/$tripId/saved'
     | '/_authenticated/trips/$tripId/'
     | '/_authenticated/trips/$tripId/day/$date'
   fileRoutesById: FileRoutesById
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsTripIdItineraryRouteImport
       parentRoute: typeof AuthenticatedTripsTripIdRoute
     }
+    '/_authenticated/trips/$tripId/saved': {
+      id: '/_authenticated/trips/$tripId/saved'
+      path: '/saved'
+      fullPath: '/trips/$tripId/saved'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdSavedRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
     '/_authenticated/trips/$tripId/day/$date': {
       id: '/_authenticated/trips/$tripId/day/$date'
       path: '/day/$date'
@@ -284,6 +304,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedTripsTripIdRouteChildren {
   AuthenticatedTripsTripIdItineraryRoute: typeof AuthenticatedTripsTripIdItineraryRoute
+  AuthenticatedTripsTripIdSavedRoute: typeof AuthenticatedTripsTripIdSavedRoute
   AuthenticatedTripsTripIdIndexRoute: typeof AuthenticatedTripsTripIdIndexRoute
   AuthenticatedTripsTripIdDayDateRoute: typeof AuthenticatedTripsTripIdDayDateRoute
 }
@@ -292,6 +313,7 @@ const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildr
   {
     AuthenticatedTripsTripIdItineraryRoute:
       AuthenticatedTripsTripIdItineraryRoute,
+    AuthenticatedTripsTripIdSavedRoute: AuthenticatedTripsTripIdSavedRoute,
     AuthenticatedTripsTripIdIndexRoute: AuthenticatedTripsTripIdIndexRoute,
     AuthenticatedTripsTripIdDayDateRoute: AuthenticatedTripsTripIdDayDateRoute,
   }
