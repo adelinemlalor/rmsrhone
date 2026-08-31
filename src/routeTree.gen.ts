@@ -17,7 +17,16 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSharedRouteImport } from './routes/_authenticated/shared'
 import { Route as AuthenticatedTripsIndexRouteImport } from './routes/_authenticated/trips.index'
+import { Route as AuthenticatedTripsTripIdRouteImport } from './routes/_authenticated/trips.$tripId'
 import { Route as AuthenticatedTripsNewRouteImport } from './routes/_authenticated/trips.new'
+import { Route as AuthenticatedTripsTripIdIndexRouteImport } from './routes/_authenticated/trips.$tripId.index'
+import { Route as AuthenticatedTripsTripIdBudgetRouteImport } from './routes/_authenticated/trips.$tripId.budget'
+import { Route as AuthenticatedTripsTripIdChecklistRouteImport } from './routes/_authenticated/trips.$tripId.checklist'
+import { Route as AuthenticatedTripsTripIdDocumentsRouteImport } from './routes/_authenticated/trips.$tripId.documents'
+import { Route as AuthenticatedTripsTripIdItineraryRouteImport } from './routes/_authenticated/trips.$tripId.itinerary'
+import { Route as AuthenticatedTripsTripIdSavedRouteImport } from './routes/_authenticated/trips.$tripId.saved'
+import { Route as AuthenticatedTripsTripIdTravelersRouteImport } from './routes/_authenticated/trips.$tripId.travelers'
+import { Route as AuthenticatedTripsTripIdDayDateRouteImport } from './routes/_authenticated/trips.$tripId.day.$date'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,11 +67,65 @@ const AuthenticatedTripsIndexRoute = AuthenticatedTripsIndexRouteImport.update({
   path: '/trips/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTripsTripIdRoute =
+  AuthenticatedTripsTripIdRouteImport.update({
+    id: '/trips/$tripId',
+    path: '/trips/$tripId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTripsNewRoute = AuthenticatedTripsNewRouteImport.update({
   id: '/trips/new',
   path: '/trips/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTripsTripIdIndexRoute =
+  AuthenticatedTripsTripIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdBudgetRoute =
+  AuthenticatedTripsTripIdBudgetRouteImport.update({
+    id: '/budget',
+    path: '/budget',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdChecklistRoute =
+  AuthenticatedTripsTripIdChecklistRouteImport.update({
+    id: '/checklist',
+    path: '/checklist',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdDocumentsRoute =
+  AuthenticatedTripsTripIdDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdItineraryRoute =
+  AuthenticatedTripsTripIdItineraryRouteImport.update({
+    id: '/itinerary',
+    path: '/itinerary',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdSavedRoute =
+  AuthenticatedTripsTripIdSavedRouteImport.update({
+    id: '/saved',
+    path: '/saved',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdTravelersRoute =
+  AuthenticatedTripsTripIdTravelersRouteImport.update({
+    id: '/travelers',
+    path: '/travelers',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
+const AuthenticatedTripsTripIdDayDateRoute =
+  AuthenticatedTripsTripIdDayDateRouteImport.update({
+    id: '/day/$date',
+    path: '/day/$date',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,8 +134,17 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/shared': typeof AuthenticatedSharedRoute
+  '/trips/$tripId': typeof AuthenticatedTripsTripIdRouteWithChildren
   '/trips/new': typeof AuthenticatedTripsNewRoute
   '/trips/': typeof AuthenticatedTripsIndexRoute
+  '/trips/$tripId/budget': typeof AuthenticatedTripsTripIdBudgetRoute
+  '/trips/$tripId/checklist': typeof AuthenticatedTripsTripIdChecklistRoute
+  '/trips/$tripId/documents': typeof AuthenticatedTripsTripIdDocumentsRoute
+  '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
+  '/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
+  '/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
+  '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,6 +155,14 @@ export interface FileRoutesByTo {
   '/shared': typeof AuthenticatedSharedRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
   '/trips': typeof AuthenticatedTripsIndexRoute
+  '/trips/$tripId/budget': typeof AuthenticatedTripsTripIdBudgetRoute
+  '/trips/$tripId/checklist': typeof AuthenticatedTripsTripIdChecklistRoute
+  '/trips/$tripId/documents': typeof AuthenticatedTripsTripIdDocumentsRoute
+  '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
+  '/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
+  '/trips/$tripId': typeof AuthenticatedTripsTripIdIndexRoute
+  '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,8 +173,17 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/shared': typeof AuthenticatedSharedRoute
+  '/_authenticated/trips/$tripId': typeof AuthenticatedTripsTripIdRouteWithChildren
   '/_authenticated/trips/new': typeof AuthenticatedTripsNewRoute
   '/_authenticated/trips/': typeof AuthenticatedTripsIndexRoute
+  '/_authenticated/trips/$tripId/budget': typeof AuthenticatedTripsTripIdBudgetRoute
+  '/_authenticated/trips/$tripId/checklist': typeof AuthenticatedTripsTripIdChecklistRoute
+  '/_authenticated/trips/$tripId/documents': typeof AuthenticatedTripsTripIdDocumentsRoute
+  '/_authenticated/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/_authenticated/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
+  '/_authenticated/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
+  '/_authenticated/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
+  '/_authenticated/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,8 +194,17 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/shared'
+    | '/trips/$tripId'
     | '/trips/new'
     | '/trips/'
+    | '/trips/$tripId/budget'
+    | '/trips/$tripId/checklist'
+    | '/trips/$tripId/documents'
+    | '/trips/$tripId/itinerary'
+    | '/trips/$tripId/saved'
+    | '/trips/$tripId/travelers'
+    | '/trips/$tripId/'
+    | '/trips/$tripId/day/$date'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -117,6 +215,14 @@ export interface FileRouteTypes {
     | '/shared'
     | '/trips/new'
     | '/trips'
+    | '/trips/$tripId/budget'
+    | '/trips/$tripId/checklist'
+    | '/trips/$tripId/documents'
+    | '/trips/$tripId/itinerary'
+    | '/trips/$tripId/saved'
+    | '/trips/$tripId/travelers'
+    | '/trips/$tripId'
+    | '/trips/$tripId/day/$date'
   id:
     | '__root__'
     | '/'
@@ -126,8 +232,17 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/shared'
+    | '/_authenticated/trips/$tripId'
     | '/_authenticated/trips/new'
     | '/_authenticated/trips/'
+    | '/_authenticated/trips/$tripId/budget'
+    | '/_authenticated/trips/$tripId/checklist'
+    | '/_authenticated/trips/$tripId/documents'
+    | '/_authenticated/trips/$tripId/itinerary'
+    | '/_authenticated/trips/$tripId/saved'
+    | '/_authenticated/trips/$tripId/travelers'
+    | '/_authenticated/trips/$tripId/'
+    | '/_authenticated/trips/$tripId/day/$date'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -194,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/trips/$tripId': {
+      id: '/_authenticated/trips/$tripId'
+      path: '/trips/$tripId'
+      fullPath: '/trips/$tripId'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/trips/new': {
       id: '/_authenticated/trips/new'
       path: '/trips/new'
@@ -201,14 +323,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/trips/$tripId/': {
+      id: '/_authenticated/trips/$tripId/'
+      path: '/'
+      fullPath: '/trips/$tripId/'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdIndexRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/budget': {
+      id: '/_authenticated/trips/$tripId/budget'
+      path: '/budget'
+      fullPath: '/trips/$tripId/budget'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdBudgetRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/checklist': {
+      id: '/_authenticated/trips/$tripId/checklist'
+      path: '/checklist'
+      fullPath: '/trips/$tripId/checklist'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdChecklistRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/documents': {
+      id: '/_authenticated/trips/$tripId/documents'
+      path: '/documents'
+      fullPath: '/trips/$tripId/documents'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdDocumentsRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/itinerary': {
+      id: '/_authenticated/trips/$tripId/itinerary'
+      path: '/itinerary'
+      fullPath: '/trips/$tripId/itinerary'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdItineraryRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/saved': {
+      id: '/_authenticated/trips/$tripId/saved'
+      path: '/saved'
+      fullPath: '/trips/$tripId/saved'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdSavedRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/travelers': {
+      id: '/_authenticated/trips/$tripId/travelers'
+      path: '/travelers'
+      fullPath: '/trips/$tripId/travelers'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdTravelersRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
+    '/_authenticated/trips/$tripId/day/$date': {
+      id: '/_authenticated/trips/$tripId/day/$date'
+      path: '/day/$date'
+      fullPath: '/trips/$tripId/day/$date'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdDayDateRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
   }
 }
+
+interface AuthenticatedTripsTripIdRouteChildren {
+  AuthenticatedTripsTripIdBudgetRoute: typeof AuthenticatedTripsTripIdBudgetRoute
+  AuthenticatedTripsTripIdChecklistRoute: typeof AuthenticatedTripsTripIdChecklistRoute
+  AuthenticatedTripsTripIdDocumentsRoute: typeof AuthenticatedTripsTripIdDocumentsRoute
+  AuthenticatedTripsTripIdItineraryRoute: typeof AuthenticatedTripsTripIdItineraryRoute
+  AuthenticatedTripsTripIdSavedRoute: typeof AuthenticatedTripsTripIdSavedRoute
+  AuthenticatedTripsTripIdTravelersRoute: typeof AuthenticatedTripsTripIdTravelersRoute
+  AuthenticatedTripsTripIdIndexRoute: typeof AuthenticatedTripsTripIdIndexRoute
+  AuthenticatedTripsTripIdDayDateRoute: typeof AuthenticatedTripsTripIdDayDateRoute
+}
+
+const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildren =
+  {
+    AuthenticatedTripsTripIdBudgetRoute: AuthenticatedTripsTripIdBudgetRoute,
+    AuthenticatedTripsTripIdChecklistRoute:
+      AuthenticatedTripsTripIdChecklistRoute,
+    AuthenticatedTripsTripIdDocumentsRoute:
+      AuthenticatedTripsTripIdDocumentsRoute,
+    AuthenticatedTripsTripIdItineraryRoute:
+      AuthenticatedTripsTripIdItineraryRoute,
+    AuthenticatedTripsTripIdSavedRoute: AuthenticatedTripsTripIdSavedRoute,
+    AuthenticatedTripsTripIdTravelersRoute:
+      AuthenticatedTripsTripIdTravelersRoute,
+    AuthenticatedTripsTripIdIndexRoute: AuthenticatedTripsTripIdIndexRoute,
+    AuthenticatedTripsTripIdDayDateRoute: AuthenticatedTripsTripIdDayDateRoute,
+  }
+
+const AuthenticatedTripsTripIdRouteWithChildren =
+  AuthenticatedTripsTripIdRoute._addFileChildren(
+    AuthenticatedTripsTripIdRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSharedRoute: typeof AuthenticatedSharedRoute
+  AuthenticatedTripsTripIdRoute: typeof AuthenticatedTripsTripIdRouteWithChildren
   AuthenticatedTripsNewRoute: typeof AuthenticatedTripsNewRoute
   AuthenticatedTripsIndexRoute: typeof AuthenticatedTripsIndexRoute
 }
@@ -218,6 +429,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSharedRoute: AuthenticatedSharedRoute,
+  AuthenticatedTripsTripIdRoute: AuthenticatedTripsTripIdRouteWithChildren,
   AuthenticatedTripsNewRoute: AuthenticatedTripsNewRoute,
   AuthenticatedTripsIndexRoute: AuthenticatedTripsIndexRoute,
 }
