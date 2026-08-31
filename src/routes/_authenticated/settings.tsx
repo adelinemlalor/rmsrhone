@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const { user } = Route.useRouteContext();
-  const navigate = useNavigate();
+  
   const { data: trips } = useTrips();
 
   return (
