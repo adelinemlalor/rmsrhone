@@ -25,10 +25,11 @@ export function useAuth() {
 export async function ensureProfile(user: User) {
   const { data } = await supabase.from("profiles").select("id").eq("id", user.id).maybeSingle();
   if (data) return;
+  const fullName = (user.user_metadata?.["full_name"] as string | undefined) ?? null;
   await supabase.from("profiles").insert({
     id: user.id,
-    email: user.email,
-    full_name: (user.user_metadata?.full_name as string) ?? null,
-    preferred_name: (user.user_metadata?.full_name as string)?.split(" ")[0] ?? null,
+    email: user.email ?? null,
+    full_name: fullName,
+    preferred_name: fullName?.split(" ")[0] ?? null,
   });
 }
