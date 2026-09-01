@@ -1,14 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
-
-const schema = z.object({
-  queries: z.array(z.string().min(2).max(300)).min(1).max(25),
-});
 
 export type GeocodeResult = { query: string; lat: number | null; lng: number | null };
 
+function parseInput(data: unknown): { queries: string[] } {
+  const queries = (data as { queries?: unknown })?.queries;
+  if (!Array.isArray(queries) || queries.length === 0) {
+    throw new Error("queries must be a non-empty array");
+  }
+  const clean = queries
+    .filter((q): q is string => typeof q === "string" && q.trim().length >= 2)
+    .map((q) => q.trim().slice(0, 300))
+    .slice(0, 25);
+  if (!clean.length) throw new Error("no valid queries");
+  return { queries: clean };
+}
+
 export const geocodePlaces = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => schema.parse(data))
+  .inputValidator(parseInput)
   .handler(async ({ data }): Promise<GeocodeResult[]> => {
     const lovableKey = process.env["LOVABLE_API_KEY"];
     const mapsKey = process.env["GOOGLE_MAPS_API_KEY"];
