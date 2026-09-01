@@ -88,7 +88,7 @@ function Landing() {
                 Start planning
               </Link>
               <span className="text-[13px] text-ink/45">
-                No account needed — a sample trip is already waiting.
+                No account needed — start planning in seconds.
               </span>
             </div>
           </div>
