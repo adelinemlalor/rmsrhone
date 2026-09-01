@@ -143,6 +143,25 @@ export function DayTimeline({
                           {item.completed ? "Done" : "Mark done"}
                         </span>
                       ) : null}
+                      {onSkip && !item.personal_for ? (
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSkip(item);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.stopPropagation();
+                              onSkip(item);
+                            }
+                          }}
+                          className="rounded-full bg-cream-2 px-2.5 py-1 text-ink/45"
+                        >
+                          Not doing
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 </div>
