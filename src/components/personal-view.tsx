@@ -29,13 +29,14 @@ export function usePersonalView(
   const { data: optouts } = useOptouts(tripId);
   const toggle = useToggleOptout(tripId);
 
-  const options = useMemo(
-    () =>
-      travelers
-        .filter((t) => !!t.user_id)
-        .map((t) => ({ id: t.user_id as string, name: t.user_id === currentUserId ? "Me" : t.name })),
-    [travelers, currentUserId],
-  );
+  const options = useMemo(() => {
+    const list = travelers
+      .filter((t) => !!t.user_id)
+      .map((t) => ({ id: t.user_id as string, name: t.user_id === currentUserId ? "Me" : t.name }));
+    if (!list.some((o) => o.id === currentUserId)) list.unshift({ id: currentUserId, name: "Me" });
+    return list;
+  }, [travelers, currentUserId]);
+
 
   const skippedIds = useMemo(
     () =>
