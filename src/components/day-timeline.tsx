@@ -61,13 +61,13 @@ export function DayTimeline({
   }
 
   return (
-    <ol className="relative space-y-3 pl-[64px]">
-      <span className="absolute top-2 bottom-2 left-[26px] w-px bg-border" aria-hidden />
+    <ol className="relative space-y-3 pl-[84px]">
+      <span className="absolute top-2 bottom-2 left-[46px] w-px bg-border" aria-hidden />
       {items.map((item, idx) => {
         const next = items[idx + 1];
         return (
           <li key={item.id} className="relative">
-            <span className="absolute top-5 -left-[64px] w-[52px] text-right text-[12px] font-bold text-ink/45">
+            <span className="absolute top-5 -left-[98px] w-[52px] text-right text-[12px] font-bold text-ink/45">
               {item.start_time ? timeRange(item).split("–")[0]?.trim() : "Anytime"}
             </span>
             <span
