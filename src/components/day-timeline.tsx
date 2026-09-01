@@ -98,6 +98,11 @@ export function DayTimeline({
                       {item.title}
                     </h4>
                     <StatusPill status={item.status} />
+                    {item.personal_for ? (
+                      <span className="rounded-full bg-brand/12 px-2 py-0.5 text-[10px] font-bold tracking-[0.1em] text-brand uppercase">
+                        Personal
+                      </span>
+                    ) : null}
                   </div>
                   <p className="mt-1 text-[12px] text-ink/50">
                     {[timeRange(item), durationLabel(item), item.location_name]
