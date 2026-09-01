@@ -34,6 +34,7 @@ function NewTripPage() {
   const [name, setName] = useState("");
   const [destination, setDestination] = useState("");
   const [origin, setOrigin] = useState("");
+  const [stops, setStops] = useState<string[]>([]);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [type, setType] = useState(TRIP_TYPES[0] ?? "Leisure");
@@ -41,6 +42,7 @@ function NewTripPage() {
   const [budget, setBudget] = useState("");
   const [cover, setCover] = useState("");
   const [error, setError] = useState<string | null>(null);
+
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
