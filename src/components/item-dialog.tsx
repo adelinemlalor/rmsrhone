@@ -67,12 +67,16 @@ export function ItemDialog({
   const [linkLabel, setLinkLabel] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [timeMode, setTimeMode] = useState<"times" | "duration">("times");
   const photoPreview = useImageUrl(form.image_url);
 
   useEffect(() => {
     if (draft) {
       setForm({ ...draft });
       setTab("Details");
+      setTimeMode(
+        typeof draft.details?.["duration_minutes"] === "number" ? "duration" : "times",
+      );
     }
   }, [draft]);
 
@@ -80,6 +84,17 @@ export function ItemDialog({
 
   const set = <K extends keyof AgendaItem>(key: K, value: AgendaItem[K] | null) =>
     setForm((f) => ({ ...f, [key]: value }));
+
+  const durationMinutes =
+    typeof form.details?.["duration_minutes"] === "number"
+      ? (form.details["duration_minutes"] as number)
+      : null;
+
+  const setDuration = (mins: number | null) =>
+    setForm((f) => ({
+      ...f,
+      details: { ...(f.details ?? {}), duration_minutes: mins },
+    }));
 
   const toggleName = (key: "participants" | "split_between", name: string) => {
     const current = (form[key] as string[] | undefined) ?? [];
