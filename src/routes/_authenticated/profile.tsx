@@ -8,12 +8,12 @@ import { Panel, SectionLabel } from "@/components/bits";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Traveler profile — Wayfarer" },
+      { title: "Traveler profile — RMS Rhone" },
       {
         name: "description",
         content: "Your traveler details, loyalty programs and emergency contact.",
       },
-      { property: "og:title", content: "Traveler profile — Wayfarer" },
+      { property: "og:title", content: "Traveler profile — RMS Rhone" },
       {
         property: "og:description",
         content: "Your traveler details, loyalty programs and emergency contact.",
@@ -92,7 +92,7 @@ function ProfilePage() {
         Traveler profile
       </h1>
       <p className="mt-2 text-[13px] text-ink/55">
-        Details Wayfarer can prefill when you add bookings. {user.email}
+        Details RMS Rhone can prefill when you add bookings. {user.email}
       </p>
 
       <Panel className="mt-7">

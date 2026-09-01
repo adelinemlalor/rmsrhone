@@ -6,15 +6,15 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sign in — Wayfarer trip planner" },
+      { title: "Sign in — RMS Rhone trip planner" },
       {
         name: "description",
-        content: "Sign in or create a Wayfarer account with your email to plan trips day by day.",
+        content: "Sign in or create an RMS Rhone account with your email to plan trips day by day.",
       },
-      { property: "og:title", content: "Sign in — Wayfarer trip planner" },
+      { property: "og:title", content: "Sign in — RMS Rhone trip planner" },
       {
         property: "og:description",
-        content: "Sign in or create a Wayfarer account with your email to plan trips day by day.",
+        content: "Sign in or create an RMS Rhone account with your email to plan trips day by day.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

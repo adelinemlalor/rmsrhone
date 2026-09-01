@@ -9,9 +9,9 @@ import { formatDayLong, itemCost, money, sortItems, tripDates } from "@/lib/trav
 export const Route = createFileRoute("/_authenticated/trips/$tripId/day/$date")({
   head: () => ({
     meta: [
-      { title: "Day plan — Wayfarer" },
+      { title: "Day plan — RMS Rhone" },
       { name: "description", content: "One day of your trip, hour by hour." },
-      { property: "og:title", content: "Day plan — Wayfarer" },
+      { property: "og:title", content: "Day plan — RMS Rhone" },
       { property: "og:description", content: "One day of your trip, hour by hour." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

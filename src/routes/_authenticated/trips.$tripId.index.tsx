@@ -17,9 +17,9 @@ import {
 export const Route = createFileRoute("/_authenticated/trips/$tripId/")({
   head: () => ({
     meta: [
-      { title: "Trip overview — Wayfarer" },
+      { title: "Trip overview — RMS Rhone" },
       { name: "description", content: "What's next, what's booked and what's still open." },
-      { property: "og:title", content: "Trip overview — Wayfarer" },
+      { property: "og:title", content: "Trip overview — RMS Rhone" },
       { property: "og:description", content: "What's next, what's booked and what's still open." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -6,12 +6,12 @@ import { countdownLabel, formatRange } from "@/lib/travel";
 export const Route = createFileRoute("/_authenticated/shared")({
   head: () => ({
     meta: [
-      { title: "Shared with me — Wayfarer" },
+      { title: "Shared with me — RMS Rhone" },
       {
         name: "description",
         content: "Trips other travelers have invited you to help plan.",
       },
-      { property: "og:title", content: "Shared with me — Wayfarer" },
+      { property: "og:title", content: "Shared with me — RMS Rhone" },
       {
         property: "og:description",
         content: "Trips other travelers have invited you to help plan.",

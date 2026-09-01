@@ -5,12 +5,12 @@ import { useTrips } from "@/lib/data";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Wayfarer" },
-      { name: "description", content: "Account settings and trip data for your Wayfarer account." },
-      { property: "og:title", content: "Settings — Wayfarer" },
+      { title: "Settings — RMS Rhone" },
+      { name: "description", content: "Account settings and trip data for your RMS Rhone account." },
+      { property: "og:title", content: "Settings — RMS Rhone" },
       {
         property: "og:description",
-        content: "Account settings and trip data for your Wayfarer account.",
+        content: "Account settings and trip data for your RMS Rhone account.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

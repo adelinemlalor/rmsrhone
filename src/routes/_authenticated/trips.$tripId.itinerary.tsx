@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/trips/$tripId/itinerary")({
   head: () => ({
     meta: [
-      { title: "Itinerary — Wayfarer" },
+      { title: "Itinerary — RMS Rhone" },
       { name: "description", content: "Your hour-by-hour trip itinerary, day by day." },
-      { property: "og:title", content: "Itinerary — Wayfarer" },
+      { property: "og:title", content: "Itinerary — RMS Rhone" },
       { property: "og:description", content: "Your hour-by-hour trip itinerary, day by day." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -91,7 +91,7 @@ function ItineraryPage() {
         <div className="mt-6">
           <EmptyState
             title="Add dates to build the timeline"
-            description="Set a start and end date on this trip and Wayfarer will lay out every day for you."
+            description="Set a start and end date on this trip and RMS Rhone will lay out every day for you."
           />
         </div>
       ) : null}

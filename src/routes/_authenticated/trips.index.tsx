@@ -10,9 +10,9 @@ import { Trash2 } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/trips/")({
   head: () => ({
     meta: [
-      { title: "Your trips — Wayfarer" },
+      { title: "Your trips — RMS Rhone" },
       { name: "description", content: "All of your upcoming, current and past trips at a glance." },
-      { property: "og:title", content: "Your trips — Wayfarer" },
+      { property: "og:title", content: "Your trips — RMS Rhone" },
       {
         property: "og:description",
         content: "All of your upcoming, current and past trips at a glance.",
@@ -153,7 +153,7 @@ function TripsPage() {
         ) : shown.length === 0 ? (
           <EmptyState
             title="No trips here yet"
-            description="Start a new trip and Wayfarer will build the day-by-day timeline as you add plans."
+            description="Start a new trip and RMS Rhone will build the day-by-day timeline as you add plans."
             action={
               <Link
                 to="/trips/new"

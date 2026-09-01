@@ -8,9 +8,9 @@ import { DOC_CATEGORIES } from "@/lib/travel";
 export const Route = createFileRoute("/_authenticated/trips/$tripId/documents")({
   head: () => ({
     meta: [
-      { title: "Documents — Wayfarer" },
+      { title: "Documents — RMS Rhone" },
       { name: "description", content: "Tickets, passes and confirmations attached to this trip." },
-      { property: "og:title", content: "Documents — Wayfarer" },
+      { property: "og:title", content: "Documents — RMS Rhone" },
       {
         property: "og:description",
         content: "Tickets, passes and confirmations attached to this trip.",

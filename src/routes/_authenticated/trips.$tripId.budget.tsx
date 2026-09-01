@@ -13,9 +13,9 @@ import {
 export const Route = createFileRoute("/_authenticated/trips/$tripId/budget")({
   head: () => ({
     meta: [
-      { title: "Budget — Wayfarer" },
+      { title: "Budget — RMS Rhone" },
       { name: "description", content: "Trip spend by category and who owes who." },
-      { property: "og:title", content: "Budget — Wayfarer" },
+      { property: "og:title", content: "Budget — RMS Rhone" },
       { property: "og:description", content: "Trip spend by category and who owes who." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
