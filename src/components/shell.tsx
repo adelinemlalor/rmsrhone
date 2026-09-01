@@ -1,5 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+
 
 const NAV = [
   { to: "/trips", label: "Trips" },
@@ -16,7 +20,18 @@ export function AppShell({
   children: React.ReactNode;
   initials: string;
 }) {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+
+  async function signOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    await navigate({ to: "/auth", replace: true });
+  }
+
   return (
+
     <div className="min-h-screen bg-cream text-ink">
       <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6 lg:px-10">
         <header className="flex items-center justify-between gap-4 pb-6">
@@ -61,6 +76,15 @@ export function AppShell({
             >
               {initials || "··"}
             </Link>
+            <button
+              onClick={() => void signOut()}
+              title="Sign out"
+              aria-label="Sign out"
+              className="grid size-9 place-items-center rounded-full border border-border text-ink/55 transition-colors hover:text-ink"
+            >
+              <LogOut className="size-4" />
+            </button>
+
           </div>
         </header>
 

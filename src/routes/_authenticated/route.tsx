@@ -1,13 +1,17 @@
 import { useEffect } from "react";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { AppShell } from "@/components/shell";
 import { ensureProfile } from "@/hooks/useAuth";
-import { GUEST_USER } from "@/lib/guest";
+import { supabase } from "@/integrations/supabase/client";
 import { initials } from "@/lib/travel";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: () => ({ user: GUEST_USER }),
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth" });
+    return { user: data.user };
+  },
   component: AuthedLayout,
 });
 
