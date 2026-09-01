@@ -20,7 +20,17 @@ export function AppShell({
   children: React.ReactNode;
   initials: string;
 }) {
-  return (
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+
+  async function signOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    await navigate({ to: "/auth", replace: true });
+  }
+
+
     <div className="min-h-screen bg-cream text-ink">
       <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6 lg:px-10">
         <header className="flex items-center justify-between gap-4 pb-6">
