@@ -37,14 +37,14 @@ export function AppShell({
         <header className="flex items-center justify-between gap-4 pb-6">
           <Link to="/trips" className="flex items-center gap-3">
             <span className="font-display grid size-10 place-items-center rounded-2xl bg-brand text-lg font-semibold text-cream">
-              W
+              R
             </span>
             <span className="hidden sm:block">
               <span className="font-display block text-[15px] leading-none font-extrabold tracking-tight">
-                Wayfarer
+                RMS Rhone
               </span>
               <span className="mt-1 block text-[10px] font-semibold tracking-[0.2em] text-ink/45 uppercase">
-                Plan it together
+                Plan the whole journey
               </span>
             </span>
           </Link>
