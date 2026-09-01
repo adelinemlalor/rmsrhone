@@ -98,8 +98,20 @@ function NewTripPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
+            <label className={label} htmlFor="origin">
+              Departing from
+            </label>
+            <input
+              id="origin"
+              value={origin}
+              onChange={(e) => setOrigin(e.target.value)}
+              placeholder="San Jose, Costa Rica"
+              className={field}
+            />
+          </div>
+          <div>
             <label className={label} htmlFor="dest">
-              Primary destination
+              Arrival
             </label>
             <input
               id="dest"
@@ -109,18 +121,47 @@ function NewTripPage() {
               className={field}
             />
           </div>
-          <div>
-            <label className={label} htmlFor="origin">
-              Departing from
-            </label>
-            <input
-              id="origin"
-              value={origin}
-              onChange={(e) => setOrigin(e.target.value)}
-              placeholder="New York, NY"
-              className={field}
-            />
+
+          <div className="sm:col-span-2">
+            {stops.length > 0 ? (
+              <div className="space-y-3">
+                {stops.map((stop, i) => (
+                  <div key={i}>
+                    <label className={label} htmlFor={`stop-${i}`}>
+                      Next arrival {i + 2}
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        id={`stop-${i}`}
+                        value={stop}
+                        onChange={(e) =>
+                          setStops((prev) => prev.map((s, j) => (j === i ? e.target.value : s)))
+                        }
+                        placeholder="Búzios, Brazil"
+                        className={field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setStops((prev) => prev.filter((_, j) => j !== i))}
+                        aria-label="Remove destination"
+                        className="shrink-0 rounded-2xl border border-border px-4 text-[16px] font-bold text-ink/50"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => setStops((prev) => [...prev, ""])}
+              className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/60 px-4 py-2 text-[12px] font-bold text-ink/70"
+            >
+              <span className="text-[15px] leading-none">+</span> Add another destination
+            </button>
           </div>
+
           <div>
             <label className={label} htmlFor="start">
               Start date
