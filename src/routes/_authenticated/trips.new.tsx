@@ -40,9 +40,11 @@ function NewTripPage() {
   const [currency, setCurrency] = useState("USD");
   const [budget, setBudget] = useState("");
   const [cover, setCover] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     try {
       const trip = await saveTrip.mutateAsync({
         owner_id: user.id,
