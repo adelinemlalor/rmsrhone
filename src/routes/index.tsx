@@ -72,12 +72,12 @@ function Landing() {
               Trip planning, warmed up
             </span>
             <h1 className="font-display mt-5 text-[44px] leading-[1.03] font-extrabold tracking-tight sm:text-[60px]">
-              Every plan, every hour,
+              Plan the whole
               <br />
-              <span className="text-brand">in one place.</span>
+              <span className="text-brand">journey.</span>
             </h1>
             <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink/60">
-              Wayfarer holds your reservations like a travel binder and lays them out like a
+              RMS Rhone holds your reservations like a travel binder and lays them out like a
               beautiful day planner — so you always know what's next, what it costs, and who's
               coming.
             </p>
