@@ -23,6 +23,7 @@ import { Route as AuthenticatedTripsTripIdBudgetRouteImport } from './routes/_au
 import { Route as AuthenticatedTripsTripIdChecklistRouteImport } from './routes/_authenticated/trips.$tripId.checklist'
 import { Route as AuthenticatedTripsTripIdDocumentsRouteImport } from './routes/_authenticated/trips.$tripId.documents'
 import { Route as AuthenticatedTripsTripIdItineraryRouteImport } from './routes/_authenticated/trips.$tripId.itinerary'
+import { Route as AuthenticatedTripsTripIdMapRouteImport } from './routes/_authenticated/trips.$tripId.map'
 import { Route as AuthenticatedTripsTripIdSavedRouteImport } from './routes/_authenticated/trips.$tripId.saved'
 import { Route as AuthenticatedTripsTripIdTravelersRouteImport } from './routes/_authenticated/trips.$tripId.travelers'
 import { Route as AuthenticatedTripsTripIdDayDateRouteImport } from './routes/_authenticated/trips.$tripId.day.$date'
@@ -102,6 +103,12 @@ const AuthenticatedTripsTripIdItineraryRoute =
     path: '/itinerary',
     getParentRoute: () => AuthenticatedTripsTripIdRoute,
   } as any)
+const AuthenticatedTripsTripIdMapRoute =
+  AuthenticatedTripsTripIdMapRouteImport.update({
+    id: '/map',
+    path: '/map',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
 const AuthenticatedTripsTripIdSavedRoute =
   AuthenticatedTripsTripIdSavedRouteImport.update({
     id: '/saved',
@@ -134,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/trips/$tripId/checklist': typeof AuthenticatedTripsTripIdChecklistRoute
   '/trips/$tripId/documents': typeof AuthenticatedTripsTripIdDocumentsRoute
   '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/trips/$tripId/map': typeof AuthenticatedTripsTripIdMapRoute
   '/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
   '/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
   '/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
@@ -151,6 +159,7 @@ export interface FileRoutesByTo {
   '/trips/$tripId/checklist': typeof AuthenticatedTripsTripIdChecklistRoute
   '/trips/$tripId/documents': typeof AuthenticatedTripsTripIdDocumentsRoute
   '/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/trips/$tripId/map': typeof AuthenticatedTripsTripIdMapRoute
   '/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
   '/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
   '/trips/$tripId': typeof AuthenticatedTripsTripIdIndexRoute
@@ -171,6 +180,7 @@ export interface FileRoutesById {
   '/_authenticated/trips/$tripId/checklist': typeof AuthenticatedTripsTripIdChecklistRoute
   '/_authenticated/trips/$tripId/documents': typeof AuthenticatedTripsTripIdDocumentsRoute
   '/_authenticated/trips/$tripId/itinerary': typeof AuthenticatedTripsTripIdItineraryRoute
+  '/_authenticated/trips/$tripId/map': typeof AuthenticatedTripsTripIdMapRoute
   '/_authenticated/trips/$tripId/saved': typeof AuthenticatedTripsTripIdSavedRoute
   '/_authenticated/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
   '/_authenticated/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/trips/$tripId/checklist'
     | '/trips/$tripId/documents'
     | '/trips/$tripId/itinerary'
+    | '/trips/$tripId/map'
     | '/trips/$tripId/saved'
     | '/trips/$tripId/travelers'
     | '/trips/$tripId/'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/trips/$tripId/checklist'
     | '/trips/$tripId/documents'
     | '/trips/$tripId/itinerary'
+    | '/trips/$tripId/map'
     | '/trips/$tripId/saved'
     | '/trips/$tripId/travelers'
     | '/trips/$tripId'
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trips/$tripId/checklist'
     | '/_authenticated/trips/$tripId/documents'
     | '/_authenticated/trips/$tripId/itinerary'
+    | '/_authenticated/trips/$tripId/map'
     | '/_authenticated/trips/$tripId/saved'
     | '/_authenticated/trips/$tripId/travelers'
     | '/_authenticated/trips/$tripId/'
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsTripIdItineraryRouteImport
       parentRoute: typeof AuthenticatedTripsTripIdRoute
     }
+    '/_authenticated/trips/$tripId/map': {
+      id: '/_authenticated/trips/$tripId/map'
+      path: '/map'
+      fullPath: '/trips/$tripId/map'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdMapRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
     '/_authenticated/trips/$tripId/saved': {
       id: '/_authenticated/trips/$tripId/saved'
       path: '/saved'
@@ -367,6 +387,7 @@ interface AuthenticatedTripsTripIdRouteChildren {
   AuthenticatedTripsTripIdChecklistRoute: typeof AuthenticatedTripsTripIdChecklistRoute
   AuthenticatedTripsTripIdDocumentsRoute: typeof AuthenticatedTripsTripIdDocumentsRoute
   AuthenticatedTripsTripIdItineraryRoute: typeof AuthenticatedTripsTripIdItineraryRoute
+  AuthenticatedTripsTripIdMapRoute: typeof AuthenticatedTripsTripIdMapRoute
   AuthenticatedTripsTripIdSavedRoute: typeof AuthenticatedTripsTripIdSavedRoute
   AuthenticatedTripsTripIdTravelersRoute: typeof AuthenticatedTripsTripIdTravelersRoute
   AuthenticatedTripsTripIdIndexRoute: typeof AuthenticatedTripsTripIdIndexRoute
@@ -382,6 +403,7 @@ const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildr
       AuthenticatedTripsTripIdDocumentsRoute,
     AuthenticatedTripsTripIdItineraryRoute:
       AuthenticatedTripsTripIdItineraryRoute,
+    AuthenticatedTripsTripIdMapRoute: AuthenticatedTripsTripIdMapRoute,
     AuthenticatedTripsTripIdSavedRoute: AuthenticatedTripsTripIdSavedRoute,
     AuthenticatedTripsTripIdTravelersRoute:
       AuthenticatedTripsTripIdTravelersRoute,
