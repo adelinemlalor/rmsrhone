@@ -78,9 +78,9 @@ function AuthPage() {
       <div className="w-full max-w-[420px]">
         <Link to="/" className="mb-8 flex items-center justify-center gap-3">
           <span className="font-display grid size-11 place-items-center rounded-2xl bg-brand text-lg font-semibold text-cream">
-            W
+            R
           </span>
-          <span className="font-display text-[17px] font-extrabold tracking-tight">Wayfarer</span>
+          <span className="font-display text-[17px] font-extrabold tracking-tight">RMS Rhone</span>
         </Link>
 
         <div className="rounded-[26px] border border-border bg-card p-7 shadow-sm">
