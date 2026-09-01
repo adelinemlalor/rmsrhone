@@ -52,7 +52,9 @@ function NewTripPage() {
         owner_id: user.id,
         name: name.trim(),
         primary_destination: destination.trim() || null,
+        additional_destinations: stops.map((s) => s.trim()).filter(Boolean),
         origin_city: origin.trim() || null,
+
         start_date: start || null,
         end_date: end || start || null,
         trip_type: type,
