@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
+import { ImageOff } from "lucide-react";
 import { AvatarStack, CategoryIcon, StatusPill } from "@/components/bits";
+
 import {
   durationLabel,
   itemCost,
