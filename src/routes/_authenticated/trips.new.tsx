@@ -34,7 +34,7 @@ function NewTripPage() {
   const [name, setName] = useState("");
   const [destination, setDestination] = useState("");
   const [origin, setOrigin] = useState("");
-  const [stops, setStops] = useState<string[]>([]);
+  const [stops, setStops] = useState<{ from: string; to: string }[]>([]);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [type, setType] = useState(TRIP_TYPES[0] ?? "Leisure");
@@ -52,7 +52,9 @@ function NewTripPage() {
         owner_id: user.id,
         name: name.trim(),
         primary_destination: destination.trim() || null,
-        additional_destinations: stops.map((s) => s.trim()).filter(Boolean),
+        additional_destinations: stops
+          .map((s) => s.to.trim())
+          .filter(Boolean),
         origin_city: origin.trim() || null,
 
         start_date: start || null,
@@ -124,38 +126,63 @@ function NewTripPage() {
 
           <div className="sm:col-span-2">
             {stops.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {stops.map((stop, i) => (
-                  <div key={i}>
-                    <label className={label} htmlFor={`stop-${i}`}>
-                      Next arrival {i + 2}
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        id={`stop-${i}`}
-                        value={stop}
-                        onChange={(e) =>
-                          setStops((prev) => prev.map((s, j) => (j === i ? e.target.value : s)))
-                        }
-                        placeholder="Búzios, Brazil"
-                        className={field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setStops((prev) => prev.filter((_, j) => j !== i))}
-                        aria-label="Remove destination"
-                        className="shrink-0 rounded-2xl border border-border px-4 text-[16px] font-bold text-ink/50"
-                      >
-                        ×
-                      </button>
+                  <div key={i} className="flex items-end gap-2">
+                    <div className="grid flex-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className={label} htmlFor={`stop-from-${i}`}>
+                          Departing from
+                        </label>
+                        <input
+                          id={`stop-from-${i}`}
+                          value={stop.from}
+                          onChange={(e) =>
+                            setStops((prev) =>
+                              prev.map((s, j) => (j === i ? { ...s, from: e.target.value } : s)),
+                            )
+                          }
+                          placeholder="Cusco, Peru"
+                          className={field}
+                        />
+                      </div>
+                      <div>
+                        <label className={label} htmlFor={`stop-to-${i}`}>
+                          Arrival {i + 2}
+                        </label>
+                        <input
+                          id={`stop-to-${i}`}
+                          value={stop.to}
+                          onChange={(e) =>
+                            setStops((prev) =>
+                              prev.map((s, j) => (j === i ? { ...s, to: e.target.value } : s)),
+                            )
+                          }
+                          placeholder="Búzios, Brazil"
+                          className={field}
+                        />
+                      </div>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setStops((prev) => prev.filter((_, j) => j !== i))}
+                      aria-label="Remove destination"
+                      className="h-[46px] shrink-0 rounded-2xl border border-border px-4 text-[16px] font-bold text-ink/50"
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>
             ) : null}
             <button
               type="button"
-              onClick={() => setStops((prev) => [...prev, ""])}
+              onClick={() =>
+                setStops((prev) => [
+                  ...prev,
+                  { from: prev[prev.length - 1]?.to || destination, to: "" },
+                ])
+              }
               className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/60 px-4 py-2 text-[12px] font-bold text-ink/70"
             >
               <span className="text-[15px] leading-none">+</span> Add another destination
