@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
+import { ImageOff } from "lucide-react";
 import { AvatarStack, CategoryIcon, StatusPill } from "@/components/bits";
+
 import {
   durationLabel,
   itemCost,
@@ -12,16 +15,29 @@ import { cn } from "@/lib/utils";
 
 function ItemPhoto({ url, alt }: { url: string; alt: string }) {
   const src = useImageUrl(url);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [src]);
   if (!src) return null;
+  if (failed) {
+    return (
+      <div className="hidden size-[92px] shrink-0 flex-col items-center justify-center gap-1 rounded-[16px] border border-dashed border-border bg-secondary/40 p-2 text-center text-[10px] leading-tight text-muted-foreground sm:flex">
+        <ImageOff className="size-4" />
+        Not a direct image link
+      </div>
+    );
+  }
   return (
     <img
       src={src}
       alt={alt}
       loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
       className="hidden size-[92px] shrink-0 rounded-[16px] border border-border object-cover sm:block"
     />
   );
 }
+
 
 export function DayTimeline({
   items,

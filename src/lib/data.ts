@@ -414,6 +414,24 @@ export async function uploadItemPhoto(tripId: string, file: File): Promise<strin
   return `${STORAGE_PREFIX}${path}`;
 }
 
+/**
+ * Turn a pasted link into a direct image URL when possible.
+ * Handles Google Images result links (…/imgres?imgurl=…) and strips whitespace.
+ */
+export function normalizeImageUrl(input: string | null | undefined): string | null {
+  const raw = (input ?? "").trim();
+  if (!raw) return null;
+  if (raw.startsWith(STORAGE_PREFIX)) return raw;
+  try {
+    const u = new URL(raw);
+    const imgurl = u.searchParams.get("imgurl") ?? u.searchParams.get("mediaurl");
+    if (imgurl) return imgurl;
+  } catch {
+    return raw;
+  }
+  return raw;
+}
+
 /** Resolve an image_url value (plain URL or stored file) into a displayable URL. */
 export function useImageUrl(value: string | null | undefined) {
   const [url, setUrl] = useState<string | null>(null);
@@ -424,9 +442,10 @@ export function useImageUrl(value: string | null | undefined) {
       return;
     }
     if (!value.startsWith(STORAGE_PREFIX)) {
-      setUrl(value);
+      setUrl(normalizeImageUrl(value));
       return;
     }
+
     void documentUrl(value.slice(STORAGE_PREFIX.length)).then((u) => {
       if (active) setUrl(u);
     });
