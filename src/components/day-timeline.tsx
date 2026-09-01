@@ -7,7 +7,21 @@ import {
   type AgendaItem,
   type Traveler,
 } from "@/lib/travel";
+import { useImageUrl } from "@/lib/data";
 import { cn } from "@/lib/utils";
+
+function ItemPhoto({ url, alt }: { url: string; alt: string }) {
+  const src = useImageUrl(url);
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      className="hidden size-[92px] shrink-0 rounded-[16px] border border-border object-cover sm:block"
+    />
+  );
+}
 
 export function DayTimeline({
   items,
