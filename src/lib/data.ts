@@ -402,3 +402,36 @@ export async function documentUrl(path: string): Promise<string | null> {
   const { data } = await supabase.storage.from("trip-documents").createSignedUrl(path, 3600);
   return data?.signedUrl ?? null;
 }
+
+const STORAGE_PREFIX = "storage:";
+
+/** Upload a photo for an agenda item; returns the value to store in image_url. */
+export async function uploadItemPhoto(tripId: string, file: File): Promise<string> {
+  const path = `${tripId}/photos/${crypto.randomUUID()}-${file.name}`;
+  const { error } = await supabase.storage.from("trip-documents").upload(path, file);
+  if (error) throw error;
+  return `${STORAGE_PREFIX}${path}`;
+}
+
+/** Resolve an image_url value (plain URL or stored file) into a displayable URL. */
+export function useImageUrl(value: string | null | undefined) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    if (!value) {
+      setUrl(null);
+      return;
+    }
+    if (!value.startsWith(STORAGE_PREFIX)) {
+      setUrl(value);
+      return;
+    }
+    void documentUrl(value.slice(STORAGE_PREFIX.length)).then((u) => {
+      if (active) setUrl(u);
+    });
+    return () => {
+      active = false;
+    };
+  }, [value]);
+  return url;
+}
