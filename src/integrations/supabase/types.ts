@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      agenda_item_optouts: {
+        Row: {
+          agenda_item_id: string
+          created_at: string
+          id: string
+          note: string | null
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          agenda_item_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          agenda_item_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_item_optouts_agenda_item_id_fkey"
+            columns: ["agenda_item_id"]
+            isOneToOne: false
+            referencedRelation: "agenda_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_item_optouts_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agenda_items: {
         Row: {
           address: string | null
@@ -50,6 +92,7 @@ export type Database = {
           paid: boolean
           paid_by: string | null
           participants: string[]
+          personal_for: string | null
           refundable: boolean | null
           reservation_email: string | null
           reservation_name: string | null
@@ -108,6 +151,7 @@ export type Database = {
           paid?: boolean
           paid_by?: string | null
           participants?: string[]
+          personal_for?: string | null
           refundable?: boolean | null
           reservation_email?: string | null
           reservation_name?: string | null
@@ -166,6 +210,7 @@ export type Database = {
           paid?: boolean
           paid_by?: string | null
           participants?: string[]
+          personal_for?: string | null
           refundable?: boolean | null
           reservation_email?: string | null
           reservation_name?: string | null
