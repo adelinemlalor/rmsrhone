@@ -34,7 +34,7 @@ function NewTripPage() {
   const [name, setName] = useState("");
   const [destination, setDestination] = useState("");
   const [origin, setOrigin] = useState("");
-  const [stops, setStops] = useState<string[]>([]);
+  const [stops, setStops] = useState<{ from: string; to: string }[]>([]);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [type, setType] = useState(TRIP_TYPES[0] ?? "Leisure");
@@ -52,7 +52,9 @@ function NewTripPage() {
         owner_id: user.id,
         name: name.trim(),
         primary_destination: destination.trim() || null,
-        additional_destinations: stops.map((s) => s.trim()).filter(Boolean),
+        additional_destinations: stops
+          .map((s) => s.to.trim())
+          .filter(Boolean),
         origin_city: origin.trim() || null,
 
         start_date: start || null,
