@@ -45,12 +45,15 @@ export function DayTimeline({
   currency,
   onSelect,
   onToggleComplete,
+  onSkip,
 }: {
   items: AgendaItem[];
   travelers: Traveler[];
   currency: string;
   onSelect: (item: AgendaItem) => void;
   onToggleComplete?: (item: AgendaItem) => void;
+  /** When provided, shows a "Not doing" action that only affects the viewer's own version. */
+  onSkip?: (item: AgendaItem) => void;
 }) {
   if (items.length === 0) {
     return (
