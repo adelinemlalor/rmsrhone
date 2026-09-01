@@ -21,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/trips/$tripId")({
 const TABS = [
   { to: "/trips/$tripId", label: "Overview", exact: true },
   { to: "/trips/$tripId/itinerary", label: "Itinerary" },
+  { to: "/trips/$tripId/map", label: "Map" },
   { to: "/trips/$tripId/saved", label: "Saved places" },
   { to: "/trips/$tripId/budget", label: "Budget" },
   { to: "/trips/$tripId/documents", label: "Documents" },
