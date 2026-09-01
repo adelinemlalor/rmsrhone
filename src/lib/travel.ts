@@ -387,14 +387,25 @@ export function timeRange(item: Pick<AgendaItem, "start_time" | "end_time">): st
   return `${formatTime(item.start_time)} – ${formatTime(item.end_time)}`;
 }
 
-export function durationLabel(item: Pick<AgendaItem, "start_time" | "end_time">): string | null {
-  if (!item.start_time || !item.end_time) return null;
+export function formatMinutes(total: number): string {
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  return `${h ? `${h} hr ` : ""}${m ? `${m} min` : ""}`.trim() || "0 min";
+}
+
+export function durationLabel(
+  item: Pick<AgendaItem, "start_time" | "end_time"> & {
+    details?: Record<string, unknown>;
+  },
+): string | null {
   const toMin = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
-  let mins = toMin(item.end_time) - toMin(item.start_time);
-  if (mins <= 0) return null;
-  const h = Math.floor(mins / 60);
-  mins = mins % 60;
-  return `${h ? `${h} hr ` : ""}${mins ? `${mins} min` : ""}`.trim();
+  if (item.start_time && item.end_time) {
+    const mins = toMin(item.end_time) - toMin(item.start_time);
+    if (mins > 0) return formatMinutes(mins);
+  }
+  const stored = item.details?.["duration_minutes"];
+  if (typeof stored === "number" && stored > 0) return formatMinutes(stored);
+  return null;
 }
 
 export function daysAway(start: string | null): number | null {

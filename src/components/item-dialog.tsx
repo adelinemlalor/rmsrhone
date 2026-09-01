@@ -67,12 +67,16 @@ export function ItemDialog({
   const [linkLabel, setLinkLabel] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [timeMode, setTimeMode] = useState<"times" | "duration">("times");
   const photoPreview = useImageUrl(form.image_url);
 
   useEffect(() => {
     if (draft) {
       setForm({ ...draft });
       setTab("Details");
+      setTimeMode(
+        typeof draft.details?.["duration_minutes"] === "number" ? "duration" : "times",
+      );
     }
   }, [draft]);
 
@@ -80,6 +84,17 @@ export function ItemDialog({
 
   const set = <K extends keyof AgendaItem>(key: K, value: AgendaItem[K] | null) =>
     setForm((f) => ({ ...f, [key]: value }));
+
+  const durationMinutes =
+    typeof form.details?.["duration_minutes"] === "number"
+      ? (form.details["duration_minutes"] as number)
+      : null;
+
+  const setDuration = (mins: number | null) =>
+    setForm((f) => ({
+      ...f,
+      details: { ...(f.details ?? {}), duration_minutes: mins },
+    }));
 
   const toggleName = (key: "participants" | "split_between", name: string) => {
     const current = (form[key] as string[] | undefined) ?? [];
@@ -95,8 +110,28 @@ export function ItemDialog({
       return;
     }
     try {
+      const details = { ...(form.details ?? {}) };
+      let endTime = form.end_time ?? null;
+      if (timeMode === "duration") {
+        const mins = durationMinutes;
+        if (mins && form.start_time) {
+          const startMins =
+            Number(form.start_time.slice(0, 2)) * 60 + Number(form.start_time.slice(3, 5));
+          const endMins = (startMins + mins) % 1440;
+          endTime = `${String(Math.floor(endMins / 60)).padStart(2, "0")}:${String(
+            endMins % 60,
+          ).padStart(2, "0")}`;
+        } else {
+          endTime = null;
+        }
+        details["duration_minutes"] = mins ?? undefined;
+      } else {
+        delete details["duration_minutes"];
+      }
       await save.mutateAsync({
         ...form,
+        end_time: endTime,
+        details,
         title: form.title.trim(),
         category: form.category ?? "Activity",
         status: form.status ?? "Idea",
@@ -169,43 +204,113 @@ export function ItemDialog({
                   ))}
                 </div>
               </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div>
-                  <label className={label} htmlFor="i-date">
-                    Date
-                  </label>
-                  <input
-                    id="i-date"
-                    type="date"
-                    value={form.day_date ?? ""}
-                    onChange={(e) => set("day_date", e.target.value || null)}
-                    className={field}
-                  />
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className={cn(label, "mb-0")}>Timing</span>
+                  <div className="flex gap-1 rounded-full border border-border bg-white/60 p-0.5">
+                    {(
+                      [
+                        ["times", "Start & end"],
+                        ["duration", "Total time"],
+                      ] as const
+                    ).map(([mode, text]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setTimeMode(mode)}
+                        className={cn(
+                          "rounded-full px-2.5 py-1 text-[11px] font-bold",
+                          timeMode === mode ? "bg-ink text-cream" : "text-ink/50",
+                        )}
+                      >
+                        {text}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <label className={label} htmlFor="i-start">
-                    Start
-                  </label>
-                  <input
-                    id="i-start"
-                    type="time"
-                    value={(form.start_time ?? "").slice(0, 5)}
-                    onChange={(e) => set("start_time", e.target.value || null)}
-                    className={field}
-                  />
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <label className={label} htmlFor="i-date">
+                      Date
+                    </label>
+                    <input
+                      id="i-date"
+                      type="date"
+                      value={form.day_date ?? ""}
+                      onChange={(e) => set("day_date", e.target.value || null)}
+                      className={field}
+                    />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="i-start">
+                      Start
+                    </label>
+                    <input
+                      id="i-start"
+                      type="time"
+                      value={(form.start_time ?? "").slice(0, 5)}
+                      onChange={(e) => set("start_time", e.target.value || null)}
+                      className={field}
+                    />
+                  </div>
+                  {timeMode === "times" ? (
+                    <div>
+                      <label className={label} htmlFor="i-end">
+                        End
+                      </label>
+                      <input
+                        id="i-end"
+                        type="time"
+                        value={(form.end_time ?? "").slice(0, 5)}
+                        onChange={(e) => set("end_time", e.target.value || null)}
+                        className={field}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <span className={label}>Duration</span>
+                      <div className="flex items-center gap-2">
+                        <input
+                          aria-label="Hours"
+                          type="number"
+                          min={0}
+                          max={48}
+                          placeholder="0"
+                          value={durationMinutes ? Math.floor(durationMinutes / 60) : ""}
+                          onChange={(e) => {
+                            const h = e.target.value === "" ? 0 : Number(e.target.value);
+                            const m = (durationMinutes ?? 0) % 60;
+                            setDuration(h + m > 0 ? h * 60 + m : null);
+                          }}
+                          className={field}
+                        />
+                        <span className="text-[12px] font-bold text-ink/45">hr</span>
+                        <input
+                          aria-label="Minutes"
+                          type="number"
+                          min={0}
+                          max={59}
+                          step={5}
+                          placeholder="0"
+                          value={durationMinutes ? durationMinutes % 60 : ""}
+                          onChange={(e) => {
+                            const m = e.target.value === "" ? 0 : Number(e.target.value);
+                            const h = Math.floor((durationMinutes ?? 0) / 60);
+                            setDuration(h + m > 0 ? h * 60 + m : null);
+                          }}
+                          className={field}
+                        />
+                        <span className="text-[12px] font-bold text-ink/45">min</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className={label} htmlFor="i-end">
-                    End
-                  </label>
-                  <input
-                    id="i-end"
-                    type="time"
-                    value={(form.end_time ?? "").slice(0, 5)}
-                    onChange={(e) => set("end_time", e.target.value || null)}
-                    className={field}
-                  />
-                </div>
+                {timeMode === "duration" ? (
+                  <p className="mt-1.5 text-[11px] text-ink/40">
+                    No exact end time needed — if you set a start, we'll work out the end from
+                    the duration.
+                  </p>
+                ) : null}
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
