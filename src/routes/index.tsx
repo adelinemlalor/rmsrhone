@@ -58,11 +58,12 @@ function Landing() {
             <span className="font-display text-[15px] font-extrabold tracking-tight">Wayfarer</span>
           </div>
           <Link
-            to="/trips"
+            to="/auth"
             className="rounded-full bg-ink px-5 py-2.5 text-[13px] font-bold text-cream"
           >
-            Open planner
+            Sign in
           </Link>
+
         </header>
 
         <section className="grid items-center gap-10 py-14 lg:grid-cols-[1.05fr_1fr] lg:py-20">
