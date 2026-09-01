@@ -247,10 +247,16 @@ export function ItemDialog({
                     <input
                       value={form.image_url?.startsWith("storage:") ? "" : (form.image_url ?? "")}
                       onChange={(e) => set("image_url", e.target.value || null)}
-                      placeholder="Paste an image URL"
+                      onBlur={(e) => set("image_url", normalizeImageUrl(e.target.value))}
+                      placeholder="Paste a direct image link (ends in .jpg/.png) or upload"
                       className={field}
                       disabled={uploading}
                     />
+                    <p className="text-[11px] leading-snug text-muted-foreground">
+                      A Google search or article link won't display — right-click the image
+                      itself and choose “Copy image address”, or upload a file below.
+                    </p>
+
                     <div className="flex items-center gap-3 text-[12px] font-bold">
                       <label className="cursor-pointer text-brand">
                         {uploading ? "Uploading…" : "Upload photo"}
