@@ -455,3 +455,50 @@ export function useImageUrl(value: string | null | undefined) {
   }, [value]);
   return url;
 }
+
+/* ---------------- personal versions ---------------- */
+
+export interface AgendaOptout {
+  id: string;
+  trip_id: string;
+  agenda_item_id: string;
+  user_id: string;
+  note: string | null;
+  created_at: string;
+}
+
+export function useOptouts(tripId: string) {
+  return useQuery({
+    queryKey: ["optouts", tripId],
+    queryFn: () =>
+      unwrap<AgendaOptout[]>(
+        supabase.from("agenda_item_optouts").select("*").eq("trip_id", tripId) as any,
+      ),
+  });
+}
+
+/** Adds or removes the signed-in traveler's "not doing this" mark on a shared plan. */
+export function useToggleOptout(tripId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { itemId: string; userId: string; skip: boolean }) => {
+      if (input.skip) {
+        return unwrap<AgendaOptout>(
+          supabase
+            .from("agenda_item_optouts")
+            .insert({ trip_id: tripId, agenda_item_id: input.itemId, user_id: input.userId } as any)
+            .select()
+            .single() as any,
+        );
+      }
+      return unwrap<null>(
+        supabase
+          .from("agenda_item_optouts")
+          .delete()
+          .eq("agenda_item_id", input.itemId)
+          .eq("user_id", input.userId) as any,
+      );
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["optouts", tripId] }),
+  });
+}
