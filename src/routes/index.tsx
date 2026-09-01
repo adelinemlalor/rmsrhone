@@ -53,9 +53,9 @@ function Landing() {
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="font-display grid size-10 place-items-center rounded-2xl bg-brand text-lg font-semibold text-cream">
-              W
+              R
             </span>
-            <span className="font-display text-[15px] font-extrabold tracking-tight">Wayfarer</span>
+            <span className="font-display text-[15px] font-extrabold tracking-tight">RMS Rhone</span>
           </div>
           <Link
             to="/auth"
