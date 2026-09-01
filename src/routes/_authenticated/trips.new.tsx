@@ -62,7 +62,9 @@ function NewTripPage() {
       toast.success("Trip created");
       void navigate({ to: "/trips/$tripId", params: { tripId: trip.id } });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not create trip");
+      const msg = err instanceof Error ? err.message : "Could not create trip";
+      setError(msg);
+      toast.error(msg);
     }
   }
 
