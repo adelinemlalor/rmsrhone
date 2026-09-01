@@ -64,6 +64,8 @@ export function ItemDialog({
   const [commentText, setCommentText] = useState("");
   const [linkLabel, setLinkLabel] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const photoPreview = useImageUrl(form.image_url);
 
   useEffect(() => {
     if (draft) {
