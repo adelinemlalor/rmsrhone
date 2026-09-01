@@ -108,6 +108,7 @@ export function DayTimeline({
                     </div>
                   </div>
                 </div>
+                {item.image_url ? <ItemPhoto url={item.image_url} alt={item.title} /> : null}
               </div>
             </button>
 
