@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({
     meta: [
-      { title: "Explore ideas — Wayfarer" },
+      { title: "Explore ideas — RMS Rhone" },
       {
         name: "description",
         content: "Every place you've saved across all of your trips, in one browsable board.",
       },
-      { property: "og:title", content: "Explore ideas — Wayfarer" },
+      { property: "og:title", content: "Explore ideas — RMS Rhone" },
       {
         property: "og:description",
         content: "Every place you've saved across all of your trips, in one browsable board.",

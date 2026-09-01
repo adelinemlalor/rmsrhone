@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/trips/$tripId/checklist")({
   head: () => ({
     meta: [
-      { title: "Checklist — Wayfarer" },
+      { title: "Checklist — RMS Rhone" },
       { name: "description", content: "Everything left to do before you leave." },
-      { property: "og:title", content: "Checklist — Wayfarer" },
+      { property: "og:title", content: "Checklist — RMS Rhone" },
       { property: "og:description", content: "Everything left to do before you leave." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -517,7 +517,7 @@ export function buildICS(trip: Trip, items: AgendaItem[]): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Wayfarer//Trip Itinerary//EN",
+    "PRODID:-//RMS Rhone//Trip Itinerary//EN",
     "CALSCALE:GREGORIAN",
     `X-WR-CALNAME:${trip.name}`,
   ];
@@ -527,7 +527,7 @@ export function buildICS(trip: Trip, items: AgendaItem[]): string {
     const end = icsStamp(item.day_date, item.end_time ?? item.start_time, 10);
     lines.push(
       "BEGIN:VEVENT",
-      `UID:${item.id}@wayfarer`,
+      `UID:${item.id}@rms-rhone`,
       `DTSTART:${start}`,
       `DTEND:${end}`,
       `SUMMARY:${escapeICS(item.title)}`,

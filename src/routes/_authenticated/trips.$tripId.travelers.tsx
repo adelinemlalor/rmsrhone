@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/trips/$tripId/travelers")({
   head: () => ({
     meta: [
-      { title: "Travelers — Wayfarer" },
+      { title: "Travelers — RMS Rhone" },
       { name: "description", content: "Who's coming, and what each person can change." },
-      { property: "og:title", content: "Travelers — Wayfarer" },
+      { property: "og:title", content: "Travelers — RMS Rhone" },
       { property: "og:description", content: "Who's coming, and what each person can change." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

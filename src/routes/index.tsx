@@ -4,13 +4,13 @@ import heroImage from "@/assets/hero-travel.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Wayfarer — Visual day-by-day trip planning" },
+      { title: "RMS Rhone — Plan the whole journey." },
       {
         name: "description",
         content:
-          "Wayfarer keeps every booking, idea and hour of your trip in one warm, visual timeline you can plan with friends.",
+          "RMS Rhone keeps every booking, idea and hour of your trip in one warm, visual timeline you can plan with friends.",
       },
-      { property: "og:title", content: "Wayfarer — Visual day-by-day trip planning" },
+      { property: "og:title", content: "RMS Rhone — Plan the whole journey." },
       {
         property: "og:description",
         content:
@@ -53,9 +53,9 @@ function Landing() {
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="font-display grid size-10 place-items-center rounded-2xl bg-brand text-lg font-semibold text-cream">
-              W
+              R
             </span>
-            <span className="font-display text-[15px] font-extrabold tracking-tight">Wayfarer</span>
+            <span className="font-display text-[15px] font-extrabold tracking-tight">RMS Rhone</span>
           </div>
           <Link
             to="/auth"
@@ -72,12 +72,12 @@ function Landing() {
               Trip planning, warmed up
             </span>
             <h1 className="font-display mt-5 text-[44px] leading-[1.03] font-extrabold tracking-tight sm:text-[60px]">
-              Every plan, every hour,
+              Plan the whole
               <br />
-              <span className="text-brand">in one place.</span>
+              <span className="text-brand">journey.</span>
             </h1>
             <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink/60">
-              Wayfarer holds your reservations like a travel binder and lays them out like a
+              RMS Rhone holds your reservations like a travel binder and lays them out like a
               beautiful day planner — so you always know what's next, what it costs, and who's
               coming.
             </p>

@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/trips/new")({
   head: () => ({
     meta: [
-      { title: "New trip — Wayfarer" },
+      { title: "New trip — RMS Rhone" },
       { name: "description", content: "Start a new trip and build its day-by-day plan." },
-      { property: "og:title", content: "New trip — Wayfarer" },
+      { property: "og:title", content: "New trip — RMS Rhone" },
       {
         property: "og:description",
         content: "Start a new trip and build its day-by-day plan.",

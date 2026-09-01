@@ -23,9 +23,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/trips/$tripId/saved")({
   head: () => ({
     meta: [
-      { title: "Saved places — Wayfarer" },
+      { title: "Saved places — RMS Rhone" },
       { name: "description", content: "Ideas and shortlisted places for this trip." },
-      { property: "og:title", content: "Saved places — Wayfarer" },
+      { property: "og:title", content: "Saved places — RMS Rhone" },
       { property: "og:description", content: "Ideas and shortlisted places for this trip." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

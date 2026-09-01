@@ -13,9 +13,9 @@ import type { AgendaItem } from "@/lib/travel";
 export const Route = createFileRoute("/_authenticated/trips/$tripId/map")({
   head: () => ({
     meta: [
-      { title: "Trip map — Wayfarer" },
+      { title: "Trip map — RMS Rhone" },
       { name: "description", content: "Every stop on your itinerary plotted on one map." },
-      { property: "og:title", content: "Trip map — Wayfarer" },
+      { property: "og:title", content: "Trip map — RMS Rhone" },
       {
         property: "og:description",
         content: "Every stop on your itinerary plotted on one map.",
