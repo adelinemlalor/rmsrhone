@@ -41,6 +41,7 @@ export type Database = {
           details: Json
           end_time: string | null
           id: string
+          image_url: string | null
           latitude: number | null
           location_name: string | null
           longitude: number | null
@@ -98,6 +99,7 @@ export type Database = {
           details?: Json
           end_time?: string | null
           id?: string
+          image_url?: string | null
           latitude?: number | null
           location_name?: string | null
           longitude?: number | null
@@ -155,6 +157,7 @@ export type Database = {
           details?: Json
           end_time?: string | null
           id?: string
+          image_url?: string | null
           latitude?: number | null
           location_name?: string | null
           longitude?: number | null

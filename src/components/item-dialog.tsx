@@ -14,6 +14,8 @@ import {
   useItemLinks,
   useSaveAgendaItem,
   useSaveLink,
+  useImageUrl,
+  uploadItemPhoto,
 } from "@/lib/data";
 import {
   CATEGORIES,
@@ -62,6 +64,8 @@ export function ItemDialog({
   const [commentText, setCommentText] = useState("");
   const [linkLabel, setLinkLabel] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const photoPreview = useImageUrl(form.image_url);
 
   useEffect(() => {
     if (draft) {
@@ -223,6 +227,64 @@ export function ItemDialog({
                     onChange={(e) => set("address", e.target.value || null)}
                     className={field}
                   />
+                </div>
+              </div>
+              <div>
+                <span className={label}>Photo</span>
+                <div className="flex flex-wrap items-center gap-3">
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt=""
+                      className="size-20 rounded-xl border border-border object-cover"
+                    />
+                  ) : (
+                    <div className="grid size-20 place-items-center rounded-xl border border-dashed border-border text-[11px] text-ink/35">
+                      None
+                    </div>
+                  )}
+                  <div className="min-w-[220px] flex-1 space-y-2">
+                    <input
+                      value={form.image_url?.startsWith("storage:") ? "" : (form.image_url ?? "")}
+                      onChange={(e) => set("image_url", e.target.value || null)}
+                      placeholder="Paste an image URL"
+                      className={field}
+                      disabled={uploading}
+                    />
+                    <div className="flex items-center gap-3 text-[12px] font-bold">
+                      <label className="cursor-pointer text-brand">
+                        {uploading ? "Uploading…" : "Upload photo"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setUploading(true);
+                            try {
+                              set("image_url", await uploadItemPhoto(tripId, file));
+                            } catch (err) {
+                              toast.error(
+                                err instanceof Error ? err.message : "Upload failed",
+                              );
+                            } finally {
+                              setUploading(false);
+                            }
+                          }}
+                        />
+                      </label>
+                      {form.image_url ? (
+                        <button
+                          type="button"
+                          onClick={() => set("image_url", null)}
+                          className="text-ink/45"
+                        >
+                          Remove
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div>
