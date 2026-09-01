@@ -40,9 +40,11 @@ function NewTripPage() {
   const [currency, setCurrency] = useState("USD");
   const [budget, setBudget] = useState("");
   const [cover, setCover] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     try {
       const trip = await saveTrip.mutateAsync({
         owner_id: user.id,
@@ -60,7 +62,9 @@ function NewTripPage() {
       toast.success("Trip created");
       void navigate({ to: "/trips/$tripId", params: { tripId: trip.id } });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not create trip");
+      const msg = err instanceof Error ? err.message : "Could not create trip";
+      setError(msg);
+      toast.error(msg);
     }
   }
 
@@ -197,6 +201,12 @@ function NewTripPage() {
             className={field}
           />
         </div>
+
+        {error ? (
+          <p className="rounded-2xl border border-border bg-white px-4 py-3 text-[13px] font-semibold text-destructive">
+            {error}
+          </p>
+        ) : null}
 
         <div className="flex gap-3 pt-2">
           <button

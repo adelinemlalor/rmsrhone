@@ -1,0 +1,18 @@
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.trips TO authenticated;
+GRANT ALL ON public.trips TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.agenda_items TO authenticated;
+GRANT ALL ON public.agenda_items TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.saved_places TO authenticated;
+GRANT ALL ON public.saved_places TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.checklist_items TO authenticated;
+GRANT ALL ON public.checklist_items TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.documents TO authenticated;
+GRANT ALL ON public.documents TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.comments TO authenticated;
+GRANT ALL ON public.comments TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.item_links TO authenticated;
+GRANT ALL ON public.item_links TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.trip_travelers TO authenticated;
+GRANT ALL ON public.trip_travelers TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles TO authenticated;
+GRANT ALL ON public.profiles TO service_role;
