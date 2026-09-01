@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useTrips } from "@/lib/data";
+import { useDeleteTrip, useTrips } from "@/lib/data";
 import { EmptyState } from "@/components/bits";
 import { countdownLabel, formatRange, TRIP_STATUSES } from "@/lib/travel";
 import type { Trip } from "@/lib/travel";
 import { cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/trips/")({
   head: () => ({
@@ -26,38 +27,68 @@ export const Route = createFileRoute("/_authenticated/trips/")({
 const FILTERS = ["Upcoming", "All", ...TRIP_STATUSES, "Archived"] as const;
 
 function TripCard({ trip }: { trip: Trip }) {
+  const deleteTrip = useDeleteTrip();
+  const [confirming, setConfirming] = useState(false);
+
   return (
-    <Link
-      to="/trips/$tripId"
-      params={{ tripId: trip.id }}
-      className="group overflow-hidden rounded-[26px] border border-border bg-white/70 transition-shadow hover:shadow-[0_20px_50px_-32px_rgba(60,40,25,0.6)]"
-    >
-      <div className="relative h-[168px] overflow-hidden bg-cream-2">
-        {trip.cover_image_url ? (
-          <img
-            src={trip.cover_image_url}
-            alt=""
-            loading="lazy"
-            className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="grid size-full place-items-center text-4xl">🧭</div>
-        )}
-        <span className="absolute top-3 left-3 rounded-full bg-cream/90 px-2.5 py-1 text-[10px] font-bold tracking-wide">
-          {trip.status}
-        </span>
-      </div>
-      <div className="p-5">
-        <p className="text-[11px] font-bold tracking-[0.14em] text-ink/40 uppercase">
-          {trip.primary_destination ?? "Destination TBD"}
-        </p>
-        <h2 className="font-display mt-1.5 text-[20px] leading-tight font-bold">{trip.name}</h2>
-        <p className="mt-2 text-[13px] text-ink/55">
-          {formatRange(trip.start_date, trip.end_date)}
-        </p>
-        <p className="mt-3 text-[12px] font-bold text-brand">{countdownLabel(trip)}</p>
-      </div>
-    </Link>
+    <div className="group relative overflow-hidden rounded-[26px] border border-border bg-white/70 transition-shadow hover:shadow-[0_20px_50px_-32px_rgba(60,40,25,0.6)]">
+      <Link to="/trips/$tripId" params={{ tripId: trip.id }} className="block">
+        <div className="relative h-[168px] overflow-hidden bg-cream-2">
+          {trip.cover_image_url ? (
+            <img
+              src={trip.cover_image_url}
+              alt=""
+              loading="lazy"
+              className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            />
+          ) : (
+            <div className="grid size-full place-items-center text-4xl">🧭</div>
+          )}
+          <span className="absolute top-3 left-3 rounded-full bg-cream/90 px-2.5 py-1 text-[10px] font-bold tracking-wide">
+            {trip.status}
+          </span>
+        </div>
+        <div className="p-5">
+          <p className="text-[11px] font-bold tracking-[0.14em] text-ink/40 uppercase">
+            {trip.primary_destination ?? "Destination TBD"}
+          </p>
+          <h2 className="font-display mt-1.5 text-[20px] leading-tight font-bold">{trip.name}</h2>
+          <p className="mt-2 text-[13px] text-ink/55">
+            {formatRange(trip.start_date, trip.end_date)}
+          </p>
+          <p className="mt-3 text-[12px] font-bold text-brand">{countdownLabel(trip)}</p>
+        </div>
+      </Link>
+
+      {confirming ? (
+        <div className="absolute top-3 right-3 flex items-center gap-2 rounded-full bg-cream/95 px-2 py-1 shadow-sm backdrop-blur">
+          <span className="text-[11px] font-bold text-ink">Delete?</span>
+          <button
+            type="button"
+            onClick={() => deleteTrip.mutate(trip.id)}
+            className="rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-red-700"
+          >
+            Yes
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirming(false)}
+            className="rounded-full bg-ink/10 px-2 py-0.5 text-[11px] font-bold text-ink hover:bg-ink/20"
+          >
+            No
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setConfirming(true)}
+          title="Delete trip"
+          className="absolute top-3 right-3 grid size-8 place-items-center rounded-full bg-cream/90 text-ink/60 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover:opacity-100"
+        >
+          <Trash2 className="size-4" />
+        </button>
+      )}
+    </div>
   );
 }
 
