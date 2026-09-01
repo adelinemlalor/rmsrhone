@@ -110,8 +110,28 @@ export function ItemDialog({
       return;
     }
     try {
+      const details = { ...(form.details ?? {}) };
+      let endTime = form.end_time ?? null;
+      if (timeMode === "duration") {
+        const mins = durationMinutes;
+        if (mins && form.start_time) {
+          const startMins =
+            Number(form.start_time.slice(0, 2)) * 60 + Number(form.start_time.slice(3, 5));
+          const endMins = (startMins + mins) % 1440;
+          endTime = `${String(Math.floor(endMins / 60)).padStart(2, "0")}:${String(
+            endMins % 60,
+          ).padStart(2, "0")}`;
+        } else {
+          endTime = null;
+        }
+        details["duration_minutes"] = mins ?? undefined;
+      } else {
+        delete details["duration_minutes"];
+      }
       await save.mutateAsync({
         ...form,
+        end_time: endTime,
+        details,
         title: form.title.trim(),
         category: form.category ?? "Activity",
         status: form.status ?? "Idea",
