@@ -4,13 +4,13 @@ import heroImage from "@/assets/hero-travel.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Wayfarer — Visual day-by-day trip planning" },
+      { title: "RMS Rhone — Plan the whole journey." },
       {
         name: "description",
         content:
-          "Wayfarer keeps every booking, idea and hour of your trip in one warm, visual timeline you can plan with friends.",
+          "RMS Rhone keeps every booking, idea and hour of your trip in one warm, visual timeline you can plan with friends.",
       },
-      { property: "og:title", content: "Wayfarer — Visual day-by-day trip planning" },
+      { property: "og:title", content: "RMS Rhone — Plan the whole journey." },
       {
         property: "og:description",
         content:
