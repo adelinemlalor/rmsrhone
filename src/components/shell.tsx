@@ -76,6 +76,15 @@ export function AppShell({
             >
               {initials || "··"}
             </Link>
+            <button
+              onClick={() => void signOut()}
+              title="Sign out"
+              aria-label="Sign out"
+              className="grid size-9 place-items-center rounded-full border border-border text-ink/55 transition-colors hover:text-ink"
+            >
+              <LogOut className="size-4" />
+            </button>
+
           </div>
         </header>
 
