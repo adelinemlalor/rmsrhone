@@ -82,6 +82,8 @@ export interface AgendaItem {
   travel_next_minutes: number | null;
   travel_next_note: string | null;
   image_url: string | null;
+  /** When set, this plan belongs only to that traveler's personal version. */
+  personal_for: string | null;
   details: Record<string, unknown>;
   sort_order: number;
   saved_place_id: string | null;

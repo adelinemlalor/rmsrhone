@@ -4,6 +4,7 @@ import { useAgenda, useSaveAgendaItem, useTravelers, useTrip } from "@/lib/data"
 import { DayTimeline } from "@/components/day-timeline";
 import { ItemDialog, type ItemDraft } from "@/components/item-dialog";
 import { EmptyState } from "@/components/bits";
+import { SkippedList, usePersonalView, ViewerSwitch } from "@/components/personal-view";
 import { formatDayLong, formatDayShort, sortItems, tripDates } from "@/lib/travel";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +33,9 @@ function ItineraryPage() {
   const [dayFilter, setDayFilter] = useState<string | "all">("all");
 
   const days = useMemo(() => (trip ? tripDates(trip) : []), [trip]);
-  const all = useMemo(() => [...(items ?? [])].sort(sortItems), [items]);
+  const everything = useMemo(() => [...(items ?? [])].sort(sortItems), [items]);
+  const view = usePersonalView(tripId, travelers ?? [], user.id, everything);
+  const all = view.filter(everything);
   const unscheduled = all.filter((i) => !i.day_date);
 
   const visibleDays = dayFilter === "all" ? days : days.filter((d) => d === dayFilter);
@@ -41,6 +44,17 @@ function ItineraryPage() {
 
   return (
     <div>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-border bg-white/60 px-4 py-3">
+        <ViewerSwitch view={view} />
+        <p className="text-[12px] text-ink/50">
+          {view.viewerId === null
+            ? "The plan everyone shares."
+            : view.isOwnView
+              ? "Your version — changes here don't touch the shared plan."
+              : `${view.viewerName}'s version.`}
+        </p>
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           <button
@@ -75,6 +89,7 @@ function ItineraryPage() {
           type="button"
           onClick={() =>
             setDraft({
+              ...view.draftDefaults,
               day_date: dayFilter === "all" ? (days[0] ?? null) : dayFilter,
               category: "Activity",
               status: "Idea",
@@ -114,6 +129,7 @@ function ItineraryPage() {
                   type="button"
                   onClick={() =>
                     setDraft({
+                      ...view.draftDefaults,
                       day_date: d,
                       category: "Activity",
                       status: "Idea",
@@ -133,11 +149,14 @@ function ItineraryPage() {
                 onToggleComplete={(item) =>
                   save.mutate({ id: item.id, completed: !item.completed })
                 }
+                onSkip={view.isOwnView ? (item) => view.toggleSkip(item) : undefined}
               />
               {i < visibleDays.length - 1 ? null : null}
             </section>
           );
         })}
+
+        <SkippedList view={view} />
 
         {unscheduled.length > 0 ? (
           <section>

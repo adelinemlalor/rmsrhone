@@ -4,6 +4,7 @@ import { useAgenda, useSaveAgendaItem, useTravelers, useTrip } from "@/lib/data"
 import { DayTimeline } from "@/components/day-timeline";
 import { ItemDialog, type ItemDraft } from "@/components/item-dialog";
 import { Panel, SectionLabel } from "@/components/bits";
+import { SkippedList, usePersonalView, ViewerSwitch } from "@/components/personal-view";
 import { formatDayLong, itemCost, money, sortItems, tripDates } from "@/lib/travel";
 
 export const Route = createFileRoute("/_authenticated/trips/$tripId/day/$date")({
@@ -30,9 +31,11 @@ function DayPage() {
   const [draft, setDraft] = useState<ItemDraft | null>(null);
 
   const days = useMemo(() => (trip ? tripDates(trip) : []), [trip]);
+  const view = usePersonalView(tripId, travelers ?? [], user.id, items ?? []);
   const dayItems = useMemo(
-    () => (items ?? []).filter((i) => i.day_date === date).sort(sortItems),
-    [items, date],
+    () => view.filter((items ?? []).filter((i) => i.day_date === date).sort(sortItems)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [items, date, view.viewerId, view.skipped.length],
   );
 
   if (!trip) return null;
@@ -44,6 +47,17 @@ function DayPage() {
   return (
     <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
       <div>
+        <div className="mb-4 rounded-[22px] border border-border bg-white/60 px-4 py-3">
+          <ViewerSwitch view={view} />
+          <p className="mt-2 text-[12px] text-ink/50">
+            {view.viewerId === null
+              ? "The plan everyone shares."
+              : view.isOwnView
+                ? "Your version — changes here don't touch the shared plan."
+                : `${view.viewerName}'s version.`}
+          </p>
+        </div>
+
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[11px] font-bold tracking-[0.16em] text-ink/40 uppercase">
@@ -76,6 +90,7 @@ function DayPage() {
               type="button"
               onClick={() =>
                 setDraft({
+                  ...view.draftDefaults,
                   day_date: date,
                   category: "Activity",
                   status: "Idea",
@@ -95,7 +110,12 @@ function DayPage() {
           currency={trip.currency}
           onSelect={(item) => setDraft(item)}
           onToggleComplete={(item) => save.mutate({ id: item.id, completed: !item.completed })}
+          onSkip={view.isOwnView ? (item) => view.toggleSkip(item) : undefined}
         />
+
+        <div className="mt-6">
+          <SkippedList view={view} />
+        </div>
       </div>
 
       <div className="space-y-5">
