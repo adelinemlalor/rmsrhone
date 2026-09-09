@@ -11,6 +11,10 @@ import {
   useComments,
   useDeleteAgendaItem,
   useDeleteLink,
+  useDeleteDocument,
+  useDocuments,
+  useUploadDocument,
+  documentUrl,
   useItemLinks,
   useSaveAgendaItem,
   useSaveLink,
@@ -62,6 +66,10 @@ export function ItemDialog({
   const { data: comments } = useComments(itemId);
   const addComment = useAddComment(tripId, itemId ?? "");
   const saveLink = useSaveLink(itemId ?? "");
+  const { data: docs } = useDocuments(tripId);
+  const uploadDoc = useUploadDocument(tripId);
+  const removeDoc = useDeleteDocument(tripId);
+  const itemDocs = (docs ?? []).filter((d) => d.agenda_item_id === itemId);
   const deleteLink = useDeleteLink(itemId ?? "");
   const [commentText, setCommentText] = useState("");
   const [linkLabel, setLinkLabel] = useState("");
@@ -622,6 +630,73 @@ export function ItemDialog({
                     </button>
                   </div>
                 </div>
+              ) : null}
+
+              {itemId ? (
+                <div className="rounded-2xl border border-border bg-white/60 p-4">
+                  <p className={label}>Documents</p>
+                  {itemDocs.length === 0 ? (
+                    <p className="text-[13px] text-ink/45">
+                      No files yet — attach a ticket, voucher or confirmation.
+                    </p>
+                  ) : (
+                    <ul className="space-y-1.5">
+                      {itemDocs.map((d) => (
+                        <li key={d.id} className="flex items-center justify-between gap-3">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const url =
+                                d.external_url ??
+                                (d.file_path ? await documentUrl(d.file_path) : null);
+                              if (url) window.open(url, "_blank", "noopener");
+                              else toast.error("File unavailable");
+                            }}
+                            className="truncate text-left text-[13px] font-semibold text-brand underline"
+                          >
+                            {d.name}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeDoc.mutate(d)}
+                            className="shrink-0 text-[12px] font-bold text-ink/40"
+                          >
+                            Remove
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <label className="mt-3 block cursor-pointer rounded-xl border border-dashed border-ink/20 bg-cream/60 px-4 py-4 text-center text-[13px] font-semibold text-ink/50">
+                    {uploadDoc.isPending ? "Uploading…" : "Upload a document"}
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          await uploadDoc.mutateAsync({
+                            file,
+                            category: "Other",
+                            agendaItemId: itemId,
+                            uploadedBy: authorId,
+                          });
+                          toast.success("Uploaded");
+                        } catch (err) {
+                          toast.error(err instanceof Error ? err.message : "Upload failed");
+                        }
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                </div>
+              ) : null}
+
+              {!itemId ? (
+                <p className="text-[12px] text-ink/45">
+                  Save this plan first to attach links and documents.
+                </p>
               ) : null}
             </>
           ) : null}
