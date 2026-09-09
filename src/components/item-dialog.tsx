@@ -24,9 +24,7 @@ import {
 
 } from "@/lib/data";
 import {
-  CATEGORIES,
   STATUSES,
-  TRAVEL_MODES,
   type AgendaItem,
   type Traveler,
 } from "@/lib/travel";
