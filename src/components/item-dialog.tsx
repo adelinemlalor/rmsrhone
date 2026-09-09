@@ -193,26 +193,6 @@ export function ItemDialog({
                 />
               </div>
               <div>
-                <span className={label}>Category</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => set("category", c)}
-                      className={cn(
-                        "rounded-full border px-2.5 py-1 text-[11px] font-bold",
-                        form.category === c
-                          ? "border-ink bg-ink text-cream"
-                          : "border-border bg-white/70 text-ink/55",
-                      )}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <span className={cn(label, "mb-0")}>Timing</span>
                   <div className="flex gap-1 rounded-full border border-border bg-white/60 p-0.5">
@@ -419,52 +399,6 @@ export function ItemDialog({
                   onChange={(e) => set("description", e.target.value || null)}
                   className={field}
                 />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div>
-                  <label className={label} htmlFor="i-nextmode">
-                    Travel to next
-                  </label>
-                  <select
-                    id="i-nextmode"
-                    value={form.travel_next_mode ?? ""}
-                    onChange={(e) => set("travel_next_mode", e.target.value || null)}
-                    className={field}
-                  >
-                    <option value="">—</option>
-                    {TRAVEL_MODES.map((m) => (
-                      <option key={m} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className={label} htmlFor="i-nextmin">
-                    Minutes
-                  </label>
-                  <input
-                    id="i-nextmin"
-                    type="number"
-                    min="0"
-                    value={form.travel_next_minutes ?? ""}
-                    onChange={(e) =>
-                      set("travel_next_minutes", e.target.value ? Number(e.target.value) : null)
-                    }
-                    className={field}
-                  />
-                </div>
-                <div>
-                  <label className={label} htmlFor="i-nextnote">
-                    Note
-                  </label>
-                  <input
-                    id="i-nextnote"
-                    value={form.travel_next_note ?? ""}
-                    onChange={(e) => set("travel_next_note", e.target.value || null)}
-                    className={field}
-                  />
-                </div>
               </div>
             </>
           ) : null}
