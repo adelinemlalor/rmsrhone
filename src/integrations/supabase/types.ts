@@ -437,13 +437,15 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           email: string | null
-          emergency_contact: string | null
           frequent_flyer: string | null
           full_name: string | null
           home_airport: string | null
           hotel_loyalty: string | null
           id: string
           known_traveler_number: string | null
+          loyalty_programs: Json
+          passport_expiry: string | null
+          passport_number: string | null
           phone: string | null
           preferred_name: string | null
           rental_car_programs: string | null
@@ -452,13 +454,15 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
-          emergency_contact?: string | null
           frequent_flyer?: string | null
           full_name?: string | null
           home_airport?: string | null
           hotel_loyalty?: string | null
           id: string
           known_traveler_number?: string | null
+          loyalty_programs?: Json
+          passport_expiry?: string | null
+          passport_number?: string | null
           phone?: string | null
           preferred_name?: string | null
           rental_car_programs?: string | null
@@ -467,13 +471,15 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
-          emergency_contact?: string | null
           frequent_flyer?: string | null
           full_name?: string | null
           home_airport?: string | null
           hotel_loyalty?: string | null
           id?: string
           known_traveler_number?: string | null
+          loyalty_programs?: Json
+          passport_expiry?: string | null
+          passport_number?: string | null
           phone?: string | null
           preferred_name?: string | null
           rental_car_programs?: string | null
