@@ -56,12 +56,12 @@ function parsePrograms(raw: unknown): Program[] {
   if (!Array.isArray(raw)) return [];
   return raw.map((r) => {
     const row = (r ?? {}) as Record<string, unknown>;
-    const kind = String(row.kind ?? "air");
+    const kind = String(row['kind'] ?? "air");
     return {
-      id: String(row.id ?? newId()),
+      id: String(row['id'] ?? newId()),
       kind: (KINDS.some((k) => k.value === kind) ? kind : "air") as Kind,
-      program: String(row.program ?? ""),
-      number: String(row.number ?? ""),
+      program: String(row['program'] ?? ""),
+      number: String(row['number'] ?? ""),
     };
   });
 }
@@ -91,7 +91,7 @@ function ProfilePage() {
     const next: Record<string, string> = {};
     for (const f of FIELDS) next[f.key] = (data[f.key] as string | null) ?? "";
     setForm(next);
-    setPrograms(parsePrograms(data.loyalty_programs));
+    setPrograms(parsePrograms(data['loyalty_programs']));
   }, [data]);
 
   function updateProgram(id: string, patch: Partial<Program>) {
@@ -106,7 +106,7 @@ function ProfilePage() {
     setSaving(true);
     const payload: Record<string, unknown> = {};
     for (const f of FIELDS) payload[f.key] = form[f.key]?.trim() ? form[f.key]! : null;
-    payload.loyalty_programs = programs
+    payload['loyalty_programs'] = programs
       .filter((p) => p.program.trim() || p.number.trim())
       .map((p) => ({ id: p.id, kind: p.kind, program: p.program.trim(), number: p.number.trim() }));
     const { error } = await supabase
