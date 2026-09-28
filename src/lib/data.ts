@@ -432,6 +432,13 @@ export function normalizeImageUrl(input: string | null | undefined): string | nu
   return raw;
 }
 
+/** Non-hook version of useImageUrl. */
+export async function resolveImageUrl(value: string | null | undefined): Promise<string | null> {
+  if (!value) return null;
+  if (!value.startsWith(STORAGE_PREFIX)) return normalizeImageUrl(value);
+  return documentUrl(value.slice(STORAGE_PREFIX.length));
+}
+
 /** Resolve an image_url value (plain URL or stored file) into a displayable URL. */
 export function useImageUrl(value: string | null | undefined) {
   const [url, setUrl] = useState<string | null>(null);
