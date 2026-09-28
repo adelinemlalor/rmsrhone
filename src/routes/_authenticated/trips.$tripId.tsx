@@ -91,6 +91,15 @@ function TripLayout() {
             </button>
             <button
               type="button"
+              onClick={() =>
+                void import("@/lib/trip-pdf").then((m) => m.exportTripPDF(trip, items ?? [], travelers ?? []))
+              }
+              className="rounded-full border border-border px-4 py-2 text-[12px] font-bold text-ink/60"
+            >
+              Export PDF
+            </button>
+            <button
+              type="button"
               onClick={() => void router.navigate({ to: "/trips/$tripId/itinerary", params: { tripId } })}
               className="rounded-full bg-brand px-4 py-2 text-[12px] font-bold text-cream"
             >
