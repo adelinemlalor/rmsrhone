@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { createFileRoute, Link, Outlet, useRouter } from "@tanstack/react-router";
-import { useAgenda, useTravelers, useTrip } from "@/lib/data";
+import { Pencil } from "lucide-react";
+import { useAgenda, useSaveTrip, useTravelers, useTrip } from "@/lib/data";
 import { AvatarStack } from "@/components/bits";
 import { buildICS, countdownLabel, formatRange, money, itemCost } from "@/lib/travel";
 
@@ -35,6 +37,9 @@ function TripLayout() {
   const { data: travelers } = useTravelers(tripId);
   const { data: items } = useAgenda(tripId);
   const router = useRouter();
+  const saveTrip = useSaveTrip();
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
 
   if (isLoading || !trip) {
     return <div className="h-[320px] animate-pulse rounded-[26px] bg-cream-2" />;
@@ -69,6 +74,54 @@ function TripLayout() {
             <h1 className="font-display mt-1 text-[30px] leading-none font-extrabold tracking-tight text-cream sm:text-[38px]">
               {trip.name}
             </h1>
+            {editingName ? (
+              <form
+                className="mt-3 flex items-center gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const next = nameDraft.trim();
+                  if (next && next !== trip.name) {
+                    saveTrip.mutate({ id: trip.id, name: next });
+                  }
+                  setEditingName(false);
+                }}
+              >
+                <input
+                  autoFocus
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  placeholder="Trip name"
+                  className="w-[260px] rounded-full border border-cream/30 bg-ink/40 px-4 py-1.5 text-[14px] font-bold text-cream outline-none placeholder:text-cream/40 focus:border-cream/60"
+                />
+                <button
+                  type="submit"
+                  disabled={saveTrip.isPending}
+                  className="rounded-full bg-cream px-3 py-1 text-[12px] font-bold text-ink disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingName(false)}
+                  className="rounded-full border border-cream/30 px-3 py-1 text-[12px] font-bold text-cream/80"
+                >
+                  Cancel
+                </button>
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setNameDraft(trip.name);
+                  setEditingName(true);
+                }}
+                title="Rename trip"
+                className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-ink/30 px-2.5 py-1 text-[11px] font-bold text-cream/80 backdrop-blur transition-colors hover:bg-ink/50 hover:text-cream"
+              >
+                <Pencil className="size-3" />
+                Rename
+              </button>
+            )}
           </div>
         </div>
 
