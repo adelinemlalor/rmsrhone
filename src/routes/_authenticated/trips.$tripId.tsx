@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { createFileRoute, Link, Outlet, useRouter } from "@tanstack/react-router";
-import { useAgenda, useTravelers, useTrip } from "@/lib/data";
+import { Pencil } from "lucide-react";
+import { useAgenda, useSaveTrip, useTravelers, useTrip } from "@/lib/data";
 import { AvatarStack } from "@/components/bits";
 import { buildICS, countdownLabel, formatRange, money, itemCost } from "@/lib/travel";
 
