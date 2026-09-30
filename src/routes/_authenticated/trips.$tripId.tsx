@@ -37,6 +37,9 @@ function TripLayout() {
   const { data: travelers } = useTravelers(tripId);
   const { data: items } = useAgenda(tripId);
   const router = useRouter();
+  const saveTrip = useSaveTrip();
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
 
   if (isLoading || !trip) {
     return <div className="h-[320px] animate-pulse rounded-[26px] bg-cream-2" />;
