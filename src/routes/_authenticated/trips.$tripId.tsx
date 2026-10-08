@@ -10,7 +10,9 @@ export const Route = createFileRoute("/_authenticated/trips/$tripId")({
   errorComponent: ({ error }) => (
     <div role="alert" className="rounded-[24px] border border-border bg-white/70 p-8">
       <h1 className="font-display text-xl font-bold">This trip didn't load</h1>
-      <p className="mt-2 text-[13px] text-ink/55">{error.message}</p>
+      <p className="mt-2 text-[13px] text-ink/55">
+        {error instanceof Error ? error.message : String(error)}
+      </p>
     </div>
   ),
   notFoundComponent: () => (
