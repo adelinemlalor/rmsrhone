@@ -5,6 +5,7 @@ import { DayTimeline } from "@/components/day-timeline";
 import { ItemDialog, type ItemDraft } from "@/components/item-dialog";
 import { EmptyState } from "@/components/bits";
 import { SkippedList, usePersonalView, ViewerSwitch } from "@/components/personal-view";
+import { ImportPlanDialog } from "@/components/import-plan-dialog";
 import { formatDayLong, formatDayShort, sortItems, tripDates } from "@/lib/travel";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ function ItineraryPage() {
   const save = useSaveAgendaItem(tripId);
   const [draft, setDraft] = useState<ItemDraft | null>(null);
   const [dayFilter, setDayFilter] = useState<string | "all">("all");
+  const [importOpen, setImportOpen] = useState(false);
 
   const days = useMemo(() => (trip ? tripDates(trip) : []), [trip]);
   const everything = useMemo(() => [...(items ?? [])].sort(sortItems), [items]);
@@ -85,22 +87,32 @@ function ItineraryPage() {
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() =>
-            setDraft({
-              ...view.draftDefaults,
-              day_date: dayFilter === "all" ? (days[0] ?? null) : dayFilter,
-              category: "Activity",
-              status: "Idea",
-              participants: (travelers ?? []).map((t) => t.name),
-            })
-          }
-          className="rounded-full bg-brand px-4 py-2 text-[12px] font-bold text-cream"
-        >
-          + Add plan
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setImportOpen(true)}
+            className="rounded-full border border-border bg-white/60 px-4 py-2 text-[12px] font-bold text-ink/70"
+          >
+            Import notes / document
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setDraft({
+                ...view.draftDefaults,
+                day_date: dayFilter === "all" ? (days[0] ?? null) : dayFilter,
+                category: "Activity",
+                status: "Idea",
+                participants: (travelers ?? []).map((t) => t.name),
+              })
+            }
+            className="rounded-full bg-brand px-4 py-2 text-[12px] font-bold text-cream"
+          >
+            + Add plan
+          </button>
+        </div>
       </div>
+      <ImportPlanDialog trip={trip} open={importOpen} onClose={() => setImportOpen(false)} />
 
       {days.length === 0 ? (
         <div className="mt-6">
