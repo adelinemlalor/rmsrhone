@@ -156,7 +156,7 @@ export function ItemDialog({
               url: l.url,
               agenda_item_id: saved.id,
             });
-          } catch (err) {
+          } catch {
             toast.error(`Link "${l.label}" could not be attached`);
           }
         }
@@ -168,7 +168,7 @@ export function ItemDialog({
               agendaItemId: saved.id,
               uploadedBy: authorId,
             });
-          } catch (err) {
+          } catch {
             toast.error(`File "${d.name}" could not be attached`);
           }
         }
