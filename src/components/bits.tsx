@@ -71,12 +71,14 @@ export function AvatarStack({
 export function Panel({
   children,
   className,
+  ref,
 }: {
   children: React.ReactNode;
   className?: string;
+  ref?: React.Ref<HTMLDivElement>;
 }) {
   return (
-    <div className={cn("rounded-[24px] border border-border bg-white/70 p-5", className)}>
+    <div ref={ref} className={cn("rounded-[24px] border border-border bg-white/70 p-5", className)}>
       {children}
     </div>
   );
