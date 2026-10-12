@@ -63,23 +63,27 @@ export function ItemDialog({
   const { data: links } = useItemLinks(tripId, itemId);
   const { data: comments } = useComments(itemId);
   const addComment = useAddComment(tripId, itemId ?? "");
-  const saveLink = useSaveLink(itemId ?? "");
+  const saveLink = useSaveLink();
   const { data: docs } = useDocuments(tripId);
   const uploadDoc = useUploadDocument(tripId);
   const removeDoc = useDeleteDocument(tripId);
-  const itemDocs = (docs ?? []).filter((d) => d.agenda_item_id === itemId);
+  const itemDocs = itemId ? (docs ?? []).filter((d) => d.agenda_item_id === itemId) : [];
   const deleteLink = useDeleteLink(itemId ?? "");
   const [commentText, setCommentText] = useState("");
   const [linkLabel, setLinkLabel] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [timeMode, setTimeMode] = useState<"times" | "duration">("times");
+  const [pendingLinks, setPendingLinks] = useState<{ label: string; url: string }[]>([]);
+  const [pendingDocs, setPendingDocs] = useState<{ name: string; file: File }[]>([]);
   const photoPreview = useImageUrl(form.image_url);
 
   useEffect(() => {
     if (draft) {
       setForm({ ...draft });
       setTab("Details");
+      setPendingLinks([]);
+      setPendingDocs([]);
       setTimeMode(
         typeof draft.details?.["duration_minutes"] === "number" ? "duration" : "times",
       );
@@ -134,7 +138,7 @@ export function ItemDialog({
       } else {
         delete details["duration_minutes"];
       }
-      await save.mutateAsync({
+      const saved = await save.mutateAsync({
         ...form,
         end_time: endTime,
         details,
@@ -143,6 +147,32 @@ export function ItemDialog({
         status: form.status ?? "Idea",
         currency: form.currency ?? currency,
       });
+      if (!form.id && saved?.id) {
+        for (const l of pendingLinks) {
+          try {
+            await saveLink.mutateAsync({
+              trip_id: tripId,
+              label: l.label,
+              url: l.url,
+              agenda_item_id: saved.id,
+            });
+          } catch {
+            toast.error(`Link "${l.label}" could not be attached`);
+          }
+        }
+        for (const d of pendingDocs) {
+          try {
+            await uploadDoc.mutateAsync({
+              file: d.file,
+              category: "Other",
+              agendaItemId: saved.id,
+              uploadedBy: authorId,
+            });
+          } catch {
+            toast.error(`File "${d.name}" could not be attached`);
+          }
+        }
+      }
       toast.success(form.id ? "Plan updated" : "Plan added");
       onClose();
     } catch (err) {
@@ -659,118 +689,185 @@ export function ItemDialog({
 
           {tab === "Notes" ? (
             <div className="space-y-4">
-              <label className={label} htmlFor="i-notes">
-                Notes
-              </label>
-              <textarea
-                id="i-notes"
-                rows={8}
-                value={form.notes ?? ""}
-                onChange={(e) => set("notes", e.target.value || null)}
-                className={field}
-              />
-              {itemId ? (
-                <div className="rounded-2xl border border-border bg-white/60 p-4">
+              <div>
+                <label className={label} htmlFor="i-notes">
+                  Notes
+                </label>
+                <textarea
+                  id="i-notes"
+                  rows={8}
+                  value={form.notes ?? ""}
+                  onChange={(e) => set("notes", e.target.value || null)}
+                  className={field}
+                />
+              </div>
+
+              <div className="rounded-2xl border border-border bg-white/60 p-4">
+                <div className="flex items-baseline justify-between gap-3">
                   <p className={label}>Links</p>
+                  {!itemId ? (
+                    <p className="text-[11px] text-ink/40">Attached when you save this plan</p>
+                  ) : null}
+                </div>
+                <ul className="space-y-1.5">
+                  {(links ?? []).map((l) => (
+                    <li key={l.id} className="flex items-center justify-between gap-3">
+                      <a
+                        href={l.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="truncate text-[13px] font-semibold text-brand underline"
+                      >
+                        {l.label}
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => deleteLink.mutate(l.id)}
+                        className="text-[12px] font-bold text-ink/40"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                  {pendingLinks.map((l, i) => (
+                    <li key={`pending-${i}`} className="flex items-center justify-between gap-3">
+                      <span className="truncate text-[13px] font-semibold text-brand underline">
+                        {l.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPendingLinks((list) => list.filter((_, j) => j !== i))
+                        }
+                        className="text-[12px] font-bold text-ink/40"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                  {(links ?? []).length === 0 && pendingLinks.length === 0 ? (
+                    <li className="text-[13px] text-ink/45">
+                      No links yet — add one below.
+                    </li>
+                  ) : null}
+                </ul>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <input
+                    value={linkLabel}
+                    onChange={(e) => setLinkLabel(e.target.value)}
+                    placeholder="Label"
+                    className={cn(field, "max-w-[150px]")}
+                  />
+                  <input
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    placeholder="https://…"
+                    className={cn(field, "max-w-[240px]")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!linkLabel.trim() || !linkUrl.trim()) return;
+                      if (!itemId) {
+                        setPendingLinks((list) => [
+                          ...list,
+                          { label: linkLabel.trim(), url: linkUrl.trim() },
+                        ]);
+                        setLinkLabel("");
+                        setLinkUrl("");
+                        return;
+                      }
+                      saveLink.mutate(
+                        {
+                          trip_id: tripId,
+                          label: linkLabel.trim(),
+                          url: linkUrl.trim(),
+                          agenda_item_id: itemId,
+                        },
+                        {
+                          onSuccess: () => {
+                            setLinkLabel("");
+                            setLinkUrl("");
+                          },
+                        },
+                      );
+                    }}
+                    className="rounded-full bg-ink px-4 py-2 text-[12px] font-bold text-cream"
+                  >
+                    Add link
+                  </button>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-white/60 p-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className={label}>Documents</p>
+                  {!itemId ? (
+                    <p className="text-[11px] text-ink/40">Attached when you save this plan</p>
+                  ) : null}
+                </div>
+                {itemDocs.length === 0 && pendingDocs.length === 0 ? (
+                  <p className="text-[13px] text-ink/45">
+                    No files yet — attach a ticket, voucher or confirmation.
+                  </p>
+                ) : (
                   <ul className="space-y-1.5">
-                    {(links ?? []).map((l) => (
-                      <li key={l.id} className="flex items-center justify-between gap-3">
-                        <a
-                          href={l.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="truncate text-[13px] font-semibold text-brand underline"
-                        >
-                          {l.label}
-                        </a>
+                    {itemDocs.map((d) => (
+                      <li key={d.id} className="flex items-center justify-between gap-3">
                         <button
                           type="button"
-                          onClick={() => deleteLink.mutate(l.id)}
-                          className="text-[12px] font-bold text-ink/40"
+                          onClick={async () => {
+                            const url =
+                              d.external_url ??
+                              (d.file_path ? await documentUrl(d.file_path) : null);
+                            if (url) window.open(url, "_blank", "noopener");
+                            else toast.error("File unavailable");
+                          }}
+                          className="truncate text-left text-[13px] font-semibold text-brand underline"
+                        >
+                          {d.name}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeDoc.mutate(d)}
+                          className="shrink-0 text-[12px] font-bold text-ink/40"
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                    {pendingDocs.map((d, i) => (
+                      <li key={`pending-doc-${i}`} className="flex items-center justify-between gap-3">
+                        <span className="truncate text-[13px] font-semibold text-brand underline">
+                          {d.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPendingDocs((list) => list.filter((_, j) => j !== i))
+                          }
+                          className="shrink-0 text-[12px] font-bold text-ink/40"
                         >
                           Remove
                         </button>
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <input
-                      value={linkLabel}
-                      onChange={(e) => setLinkLabel(e.target.value)}
-                      placeholder="Label"
-                      className={cn(field, "max-w-[150px]")}
-                    />
-                    <input
-                      value={linkUrl}
-                      onChange={(e) => setLinkUrl(e.target.value)}
-                      placeholder="https://…"
-                      className={cn(field, "max-w-[240px]")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!linkLabel.trim() || !linkUrl.trim()) return;
-                        saveLink.mutate(
-                          { trip_id: tripId, label: linkLabel.trim(), url: linkUrl.trim() },
-                          {
-                            onSuccess: () => {
-                              setLinkLabel("");
-                              setLinkUrl("");
-                            },
-                          },
-                        );
-                      }}
-                      className="rounded-full bg-ink px-4 py-2 text-[12px] font-bold text-cream"
-                    >
-                      Add link
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-
-              {itemId ? (
-                <div className="rounded-2xl border border-border bg-white/60 p-4">
-                  <p className={label}>Documents</p>
-                  {itemDocs.length === 0 ? (
-                    <p className="text-[13px] text-ink/45">
-                      No files yet — attach a ticket, voucher or confirmation.
-                    </p>
-                  ) : (
-                    <ul className="space-y-1.5">
-                      {itemDocs.map((d) => (
-                        <li key={d.id} className="flex items-center justify-between gap-3">
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              const url =
-                                d.external_url ??
-                                (d.file_path ? await documentUrl(d.file_path) : null);
-                              if (url) window.open(url, "_blank", "noopener");
-                              else toast.error("File unavailable");
-                            }}
-                            className="truncate text-left text-[13px] font-semibold text-brand underline"
-                          >
-                            {d.name}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeDoc.mutate(d)}
-                            className="shrink-0 text-[12px] font-bold text-ink/40"
-                          >
-                            Remove
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <label className="mt-3 block cursor-pointer rounded-xl border border-dashed border-ink/20 bg-cream/60 px-4 py-4 text-center text-[13px] font-semibold text-ink/50">
-                    {uploadDoc.isPending ? "Uploading…" : "Upload a document"}
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+                )}
+                <label className="mt-3 block cursor-pointer rounded-xl border border-dashed border-ink/20 bg-cream/60 px-4 py-4 text-center text-[13px] font-semibold text-ink/50">
+                  {uploadDoc.isPending ? "Uploading…" : "Upload a document"}
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!file) return;
+                      if (!itemId) {
+                        setPendingDocs((list) => [...list, { name: file.name, file }]);
+                        return;
+                      }
+                      void (async () => {
                         try {
                           await uploadDoc.mutateAsync({
                             file,
@@ -782,18 +879,11 @@ export function ItemDialog({
                         } catch (err) {
                           toast.error(err instanceof Error ? err.message : "Upload failed");
                         }
-                        e.target.value = "";
-                      }}
-                    />
-                  </label>
-                </div>
-              ) : null}
-
-              {!itemId ? (
-                <p className="text-[12px] text-ink/45">
-                  Save this plan first to attach links and documents.
-                </p>
-              ) : null}
+                      })();
+                    }}
+                  />
+                </label>
+              </div>
             </div>
           ) : null}
         </div>

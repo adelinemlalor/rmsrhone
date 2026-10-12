@@ -328,18 +328,32 @@ export function useAddComment(tripId: string, itemId: string) {
   });
 }
 
-export function useSaveLink(itemId: string) {
+export function useSaveLink(itemId?: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { trip_id: string; label: string; url: string }) =>
-      unwrap<ItemLink>(
+    mutationFn: async (input: {
+      trip_id: string;
+      label: string;
+      url: string;
+      /** Override the hook's default item — used when attaching links saved before a new plan existed. */
+      agenda_item_id?: string;
+    }) => {
+      const target = input.agenda_item_id ?? itemId;
+      return unwrap<ItemLink>(
         supabase
           .from("item_links")
-          .insert({ ...input, agenda_item_id: itemId } as any)
+          .insert({
+            trip_id: input.trip_id,
+            agenda_item_id: target,
+            label: input.label,
+            url: input.url,
+          } as any)
           .select()
           .single() as any,
-      ),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["links", itemId] }),
+      );
+    },
+    onSuccess: (link) =>
+      void qc.invalidateQueries({ queryKey: ["links", link.agenda_item_id] }),
   });
 }
 
