@@ -86,7 +86,7 @@ function SavedPage() {
 
   if (!trip) return null;
   const days = tripDates(trip);
-  const showMeals = filter === "All" || filter === "Restaurant";
+  const showMeals = filter === "All" || filter === "Restaurant" || filter === "Bar";
   const shown = (places ?? []).filter(
     (p) =>
       (filter === "All" || p.category === filter) &&
@@ -258,7 +258,7 @@ function SavedPage() {
               <option key={c}>{c}</option>
             ))}
           </select>
-          {category === "Restaurant" ? (
+          {(category === "Restaurant" || category === "Bar") ? (
             <select
               value={meal}
               onChange={(e) => setMeal(e.target.value)}
@@ -323,7 +323,7 @@ function SavedPage() {
                 name: name.trim(),
                 category,
                 priority,
-                meal: category === "Restaurant" ? meal : null,
+                meal: (category === "Restaurant" || category === "Bar") ? meal : null,
                 notes: notes.trim() || null,
                 estimated_cost: cost ? Number(cost) : null,
                 destination: trip.primary_destination,
