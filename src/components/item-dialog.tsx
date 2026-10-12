@@ -138,7 +138,7 @@ export function ItemDialog({
       } else {
         delete details["duration_minutes"];
       }
-      await save.mutateAsync({
+      const saved = await save.mutateAsync({
         ...form,
         end_time: endTime,
         details,
@@ -147,6 +147,32 @@ export function ItemDialog({
         status: form.status ?? "Idea",
         currency: form.currency ?? currency,
       });
+      if (!form.id && saved?.id) {
+        for (const l of pendingLinks) {
+          try {
+            await saveLink.mutateAsync({
+              trip_id: tripId,
+              label: l.label,
+              url: l.url,
+              agenda_item_id: saved.id,
+            });
+          } catch (err) {
+            toast.error(`Link "${l.label}" could not be attached`);
+          }
+        }
+        for (const d of pendingDocs) {
+          try {
+            await uploadDoc.mutateAsync({
+              file: d.file,
+              category: "Other",
+              agendaItemId: saved.id,
+              uploadedBy: authorId,
+            });
+          } catch (err) {
+            toast.error(`File "${d.name}" could not be attached`);
+          }
+        }
+      }
       toast.success(form.id ? "Plan updated" : "Plan added");
       onClose();
     } catch (err) {
