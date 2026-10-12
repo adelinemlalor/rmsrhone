@@ -248,7 +248,6 @@ export const PLACE_CATEGORIES = [
   "Activity",
   "Hiking",
   "Beach",
-  "Bar",
   "Hotel",
   "Shopping",
   "Tour",
@@ -257,7 +256,7 @@ export const PLACE_CATEGORIES = [
   "Place",
 ];
 
-export const MEALS = ["Breakfast", "Lunch", "Dinner"] as const;
+export const MEALS = ["Breakfast", "Lunch", "Dinner", "Bar"] as const;
 
 export const PRIORITIES = ["Must Do", "Want to Do", "Maybe"];
 
