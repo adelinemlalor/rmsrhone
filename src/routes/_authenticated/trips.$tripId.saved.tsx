@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
@@ -54,7 +54,30 @@ function SavedPage() {
   const [notes, setNotes] = useState("");
   const [cost, setCost] = useState("");
   const [url, setUrl] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState("All");
+  const formRef = useRef<HTMLDivElement | null>(null);
+
+  function startEdit(p: SavedPlace) {
+    setEditingId(p.id);
+    setName(p.name);
+    setCategory(PLACE_CATEGORIES.includes(p.category) ? p.category : PLACE_CATEGORIES[0] ?? p.category);
+    setPriority(PRIORITIES.includes(p.priority) ? p.priority : PRIORITIES[1] ?? p.priority);
+    setNotes(p.notes ?? "");
+    setCost(p.estimated_cost != null ? String(p.estimated_cost) : "");
+    setUrl(p.url ?? "");
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setName("");
+    setCategory(PLACE_CATEGORIES[0] ?? "Restaurant");
+    setPriority(PRIORITIES[1] ?? "Want to Do");
+    setNotes("");
+    setCost("");
+    setUrl("");
+  }
 
   if (!trip) return null;
   const days = tripDates(trip);
@@ -153,7 +176,17 @@ function SavedPage() {
                   )}
                   <button
                     type="button"
-                    onClick={() => deletePlace.mutate(p.id)}
+                    onClick={() => startEdit(p)}
+                    className="text-[12px] font-bold text-ink/70 underline underline-offset-4"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingId === p.id) resetForm();
+                      deletePlace.mutate(p.id);
+                    }}
                     className="text-[12px] font-bold text-ink/40"
                   >
                     Remove
@@ -165,8 +198,19 @@ function SavedPage() {
         )}
       </div>
 
-      <Panel className="h-fit min-w-0">
-        <SectionLabel>Save an idea</SectionLabel>
+      <Panel ref={formRef} className="h-fit min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <SectionLabel>{editingId ? "Edit idea" : "Save an idea"}</SectionLabel>
+          {editingId ? (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="text-[12px] font-bold text-ink/45"
+            >
+              Cancel
+            </button>
+          ) : null}
+        </div>
         <div className="space-y-3">
           <input
             value={name}
@@ -233,6 +277,7 @@ function SavedPage() {
               }
               try {
               await savePlace.mutateAsync({
+                ...(editingId ? { id: editingId } : {}),
                 name: name.trim(),
                 category,
                 priority,
@@ -241,18 +286,16 @@ function SavedPage() {
                 destination: trip.primary_destination,
                 url: link,
               });
-              setName("");
-              setNotes("");
-              setCost("");
-              setUrl("");
-              toast.success("Saved");
+              if (editingId) toast.success("Updated");
+              else toast.success("Saved");
+              resetForm();
               } catch {
                 toast.error("Could not save this place. Please try again.");
               }
             }}
             className="h-auto w-full rounded-full px-4 py-2.5 text-[13px] font-bold"
           >
-            {savePlace.isPending ? "Saving…" : "Save place"}
+            {savePlace.isPending ? (editingId ? "Saving…" : "Saving…") : editingId ? "Save changes" : "Save place"}
           </Button>
         </div>
       </Panel>
