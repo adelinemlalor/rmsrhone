@@ -94,6 +94,8 @@ export interface SavedPlace {
   trip_id: string;
   name: string;
   category: string;
+  /** For restaurants: Breakfast, Lunch, or Dinner. */
+  meal: string | null;
   location_name: string | null;
   address: string | null;
   city: string | null;

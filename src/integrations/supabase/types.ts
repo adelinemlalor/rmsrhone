@@ -497,6 +497,7 @@ export type Database = {
           id: string
           image_url: string | null
           location_name: string | null
+          meal: string | null
           name: string
           notes: string | null
           priority: string
@@ -515,6 +516,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           location_name?: string | null
+          meal?: string | null
           name: string
           notes?: string | null
           priority?: string
@@ -533,6 +535,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           location_name?: string | null
+          meal?: string | null
           name?: string
           notes?: string | null
           priority?: string
