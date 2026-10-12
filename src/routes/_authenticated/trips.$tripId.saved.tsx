@@ -11,6 +11,7 @@ import {
 } from "@/lib/data";
 import { EmptyState, Panel, SectionLabel } from "@/components/bits";
 import {
+  MEALS,
   money,
   PLACE_CATEGORIES,
   PRIORITIES,
@@ -56,12 +57,15 @@ function SavedPage() {
   const [url, setUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState("All");
+  const [mealFilter, setMealFilter] = useState("All");
+  const [meal, setMeal] = useState<string>("Dinner");
   const formRef = useRef<HTMLDivElement | null>(null);
 
   function startEdit(p: SavedPlace) {
     setEditingId(p.id);
     setName(p.name);
     setCategory(PLACE_CATEGORIES.includes(p.category) ? p.category : PLACE_CATEGORIES[0] ?? p.category);
+    setMeal(p.meal ?? "Dinner");
     setPriority(PRIORITIES.includes(p.priority) ? p.priority : PRIORITIES[1] ?? p.priority);
     setNotes(p.notes ?? "");
     setCost(p.estimated_cost != null ? String(p.estimated_cost) : "");
@@ -73,6 +77,7 @@ function SavedPage() {
     setEditingId(null);
     setName("");
     setCategory(PLACE_CATEGORIES[0] ?? "Restaurant");
+    setMeal("Dinner");
     setPriority(PRIORITIES[1] ?? "Want to Do");
     setNotes("");
     setCost("");
@@ -81,7 +86,12 @@ function SavedPage() {
 
   if (!trip) return null;
   const days = tripDates(trip);
-  const shown = (places ?? []).filter((p) => filter === "All" || p.category === filter);
+  const showMeals = filter === "All" || filter === "Restaurant";
+  const shown = (places ?? []).filter(
+    (p) =>
+      (filter === "All" || p.category === filter) &&
+      (!showMeals || mealFilter === "All" || p.meal === mealFilter),
+  );
 
   async function schedule(place: SavedPlace, date: string) {
     await saveItem.mutateAsync({
@@ -121,6 +131,26 @@ function SavedPage() {
           ))}
         </div>
 
+        {showMeals ? (
+          <div className="mb-5 flex flex-wrap gap-2">
+            {["All", ...MEALS].map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMealFilter(m)}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-[12px] font-bold",
+                  mealFilter === m
+                    ? "border-ink bg-ink text-cream"
+                    : "border-border bg-white/60 text-ink/55",
+                )}
+              >
+                {m === "All" ? "All meals" : m}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
         {shown.length === 0 ? (
           <EmptyState
             title="No saved places yet"
@@ -134,6 +164,7 @@ function SavedPage() {
                   <div className="min-w-0">
                     <p className="text-[11px] font-bold tracking-[0.14em] text-ink/40 uppercase">
                       {p.category}
+                      {p.meal ? ` · ${p.meal}` : ""}
                     </p>
                     <h3 className="font-display mt-1 text-[17px] leading-tight font-bold">
                       {p.name}
@@ -227,6 +258,17 @@ function SavedPage() {
               <option key={c}>{c}</option>
             ))}
           </select>
+          {category === "Restaurant" ? (
+            <select
+              value={meal}
+              onChange={(e) => setMeal(e.target.value)}
+              className={field}
+            >
+              {MEALS.map((m) => (
+                <option key={m}>{m}</option>
+              ))}
+            </select>
+          ) : null}
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
@@ -281,6 +323,7 @@ function SavedPage() {
                 name: name.trim(),
                 category,
                 priority,
+                meal: category === "Restaurant" ? meal : null,
                 notes: notes.trim() || null,
                 estimated_cost: cost ? Number(cost) : null,
                 destination: trip.primary_destination,

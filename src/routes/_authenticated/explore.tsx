@@ -91,6 +91,7 @@ function ExplorePage() {
                   <div className="min-w-0">
                     <p className="text-[11px] font-bold tracking-[0.14em] text-ink/40 uppercase">
                       {p.category}
+                      {p.meal ? ` · ${p.meal}` : ""}
                     </p>
                     <h2 className="font-display mt-1 text-[17px] leading-tight font-bold">
                       {p.name}

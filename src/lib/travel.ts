@@ -257,6 +257,8 @@ export const PLACE_CATEGORIES = [
   "Place",
 ];
 
+export const MEALS = ["Breakfast", "Lunch", "Dinner"] as const;
+
 export const PRIORITIES = ["Must Do", "Want to Do", "Maybe"];
 
 export const PRIORITY_ICON: Record<string, string> = {
