@@ -67,7 +67,7 @@ export function ItemDialog({
   const { data: docs } = useDocuments(tripId);
   const uploadDoc = useUploadDocument(tripId);
   const removeDoc = useDeleteDocument(tripId);
-  const itemDocs = (docs ?? []).filter((d) => d.agenda_item_id === itemId);
+  const itemDocs = itemId ? (docs ?? []).filter((d) => d.agenda_item_id === itemId) : [];
   const deleteLink = useDeleteLink(itemId ?? "");
   const [commentText, setCommentText] = useState("");
   const [linkLabel, setLinkLabel] = useState("");
