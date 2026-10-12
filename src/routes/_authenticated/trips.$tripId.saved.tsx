@@ -176,7 +176,17 @@ function SavedPage() {
                   )}
                   <button
                     type="button"
-                    onClick={() => deletePlace.mutate(p.id)}
+                    onClick={() => startEdit(p)}
+                    className="text-[12px] font-bold text-ink/70 underline underline-offset-4"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingId === p.id) resetForm();
+                      deletePlace.mutate(p.id);
+                    }}
                     className="text-[12px] font-bold text-ink/40"
                   >
                     Remove
