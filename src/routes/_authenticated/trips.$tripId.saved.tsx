@@ -277,6 +277,7 @@ function SavedPage() {
               }
               try {
               await savePlace.mutateAsync({
+                ...(editingId ? { id: editingId } : {}),
                 name: name.trim(),
                 category,
                 priority,
@@ -285,18 +286,16 @@ function SavedPage() {
                 destination: trip.primary_destination,
                 url: link,
               });
-              setName("");
-              setNotes("");
-              setCost("");
-              setUrl("");
-              toast.success("Saved");
+              if (editingId) toast.success("Updated");
+              else toast.success("Saved");
+              resetForm();
               } catch {
                 toast.error("Could not save this place. Please try again.");
               }
             }}
             className="h-auto w-full rounded-full px-4 py-2.5 text-[13px] font-bold"
           >
-            {savePlace.isPending ? "Saving…" : "Save place"}
+            {savePlace.isPending ? (editingId ? "Saving…" : "Saving…") : editingId ? "Save changes" : "Save place"}
           </Button>
         </div>
       </Panel>
