@@ -94,6 +94,8 @@ export interface SavedPlace {
   trip_id: string;
   name: string;
   category: string;
+  /** For restaurants: Breakfast, Lunch, or Dinner. */
+  meal: string | null;
   location_name: string | null;
   address: string | null;
   city: string | null;
@@ -254,6 +256,8 @@ export const PLACE_CATEGORIES = [
   "Day Trip",
   "Place",
 ];
+
+export const MEALS = ["Breakfast", "Lunch", "Dinner"] as const;
 
 export const PRIORITIES = ["Must Do", "Want to Do", "Maybe"];
 
