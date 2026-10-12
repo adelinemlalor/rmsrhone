@@ -198,8 +198,19 @@ function SavedPage() {
         )}
       </div>
 
-      <Panel className="h-fit min-w-0">
-        <SectionLabel>Save an idea</SectionLabel>
+      <Panel ref={formRef} className="h-fit min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <SectionLabel>{editingId ? "Edit idea" : "Save an idea"}</SectionLabel>
+          {editingId ? (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="text-[12px] font-bold text-ink/45"
+            >
+              Cancel
+            </button>
+          ) : null}
+        </div>
         <div className="space-y-3">
           <input
             value={name}
