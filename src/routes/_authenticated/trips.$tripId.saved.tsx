@@ -54,7 +54,30 @@ function SavedPage() {
   const [notes, setNotes] = useState("");
   const [cost, setCost] = useState("");
   const [url, setUrl] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState("All");
+  const formRef = useRef<HTMLDivElement | null>(null);
+
+  function startEdit(p: SavedPlace) {
+    setEditingId(p.id);
+    setName(p.name);
+    setCategory(PLACE_CATEGORIES.includes(p.category) ? p.category : PLACE_CATEGORIES[0] ?? p.category);
+    setPriority(PRIORITIES.includes(p.priority) ? p.priority : PRIORITIES[1] ?? p.priority);
+    setNotes(p.notes ?? "");
+    setCost(p.estimated_cost != null ? String(p.estimated_cost) : "");
+    setUrl(p.url ?? "");
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setName("");
+    setCategory(PLACE_CATEGORIES[0] ?? "Restaurant");
+    setPriority(PRIORITIES[1] ?? "Want to Do");
+    setNotes("");
+    setCost("");
+    setUrl("");
+  }
 
   if (!trip) return null;
   const days = tripDates(trip);
