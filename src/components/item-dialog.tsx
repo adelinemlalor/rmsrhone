@@ -63,7 +63,7 @@ export function ItemDialog({
   const { data: links } = useItemLinks(tripId, itemId);
   const { data: comments } = useComments(itemId);
   const addComment = useAddComment(tripId, itemId ?? "");
-  const saveLink = useSaveLink(itemId ?? "");
+  const saveLink = useSaveLink();
   const { data: docs } = useDocuments(tripId);
   const uploadDoc = useUploadDocument(tripId);
   const removeDoc = useDeleteDocument(tripId);
@@ -74,12 +74,16 @@ export function ItemDialog({
   const [linkUrl, setLinkUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [timeMode, setTimeMode] = useState<"times" | "duration">("times");
+  const [pendingLinks, setPendingLinks] = useState<{ label: string; url: string }[]>([]);
+  const [pendingDocs, setPendingDocs] = useState<{ name: string; file: File }[]>([]);
   const photoPreview = useImageUrl(form.image_url);
 
   useEffect(() => {
     if (draft) {
       setForm({ ...draft });
       setTab("Details");
+      setPendingLinks([]);
+      setPendingDocs([]);
       setTimeMode(
         typeof draft.details?.["duration_minutes"] === "number" ? "duration" : "times",
       );
