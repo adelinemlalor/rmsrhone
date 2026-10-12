@@ -1,2 +1,3 @@
  - [x] Keep saved-place text and long links within their boxes.
  - [x] Add an optional link when saving an idea and show it on saved places.
+ - [x] Move Bar out of the place categories and into the meal row (Breakfast/Lunch/Dinner/Bar).
