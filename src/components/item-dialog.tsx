@@ -36,7 +36,7 @@ const label = "mb-1 block text-[11px] font-bold tracking-wide text-ink/45 upperc
 
 export type ItemDraft = Partial<AgendaItem> & { id?: string };
 
-const SECTIONS = ["Details", "Booking", "Cost", "People", "Notes"] as const;
+const SECTIONS = ["Details", "Notes"] as const;
 
 export function ItemDialog({
   tripId,
@@ -401,7 +401,7 @@ export function ItemDialog({
             </>
           ) : null}
 
-          {tab === "Booking" ? (
+          {tab === "Details" ? (
             <>
               <div>
                 <span className={label}>Status</span>
@@ -505,6 +505,170 @@ export function ItemDialog({
                 />
               </div>
 
+            </>
+          ) : null}
+
+          {tab === "Details" ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className={label} htmlFor="i-est">
+                  Estimated cost
+                </label>
+                <input
+                  id="i-est"
+                  type="number"
+                  step="0.01"
+                  value={form.cost_estimated ?? ""}
+                  onChange={(e) =>
+                    set("cost_estimated", e.target.value ? Number(e.target.value) : null)
+                  }
+                  className={field}
+                />
+              </div>
+              <div>
+                <label className={label} htmlFor="i-act">
+                  Actual cost
+                </label>
+                <input
+                  id="i-act"
+                  type="number"
+                  step="0.01"
+                  value={form.cost_actual ?? ""}
+                  onChange={(e) =>
+                    set("cost_actual", e.target.value ? Number(e.target.value) : null)
+                  }
+                  className={field}
+                />
+              </div>
+              <div>
+                <label className={label} htmlFor="i-paidby">
+                  Paid by
+                </label>
+                <select
+                  id="i-paidby"
+                  value={form.paid_by ?? ""}
+                  onChange={(e) => set("paid_by", e.target.value || null)}
+                  className={field}
+                >
+                  <option value="">—</option>
+                  {travelers.map((t) => (
+                    <option key={t.id} value={t.name}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-end gap-4">
+                <label className="flex items-center gap-2 text-[13px] font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={!!form.paid}
+                    onChange={(e) => set("paid", e.target.checked)}
+                  />
+                  Paid
+                </label>
+                <label className="flex items-center gap-2 text-[13px] font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={!!form.shared_expense}
+                    onChange={(e) => set("shared_expense", e.target.checked)}
+                  />
+                  Shared expense
+                </label>
+              </div>
+              <div className="sm:col-span-2">
+                <span className={label}>Split between</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {travelers.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => toggleName("split_between", t.name)}
+                      className={cn(
+                        "rounded-full border px-2.5 py-1 text-[11px] font-bold",
+                        (form.split_between ?? []).includes(t.name)
+                          ? "border-ink bg-ink text-cream"
+                          : "border-border bg-white/70 text-ink/55",
+                      )}
+                    >
+                      {t.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {tab === "Details" ? (
+            <div>
+              <span className={label}>Who's going</span>
+              <div className="flex flex-wrap gap-1.5">
+                {travelers.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => toggleName("participants", t.name)}
+                    className={cn(
+                      "rounded-full border px-3 py-1.5 text-[12px] font-bold",
+                      (form.participants ?? []).includes(t.name)
+                        ? "border-ink bg-ink text-cream"
+                        : "border-border bg-white/70 text-ink/55",
+                    )}
+                  >
+                    {t.name}
+                  </button>
+                ))}
+              </div>
+
+              {itemId ? (
+                <div className="mt-6">
+                  <span className={label}>Comments</span>
+                  <ul className="space-y-2">
+                    {(comments ?? []).map((c) => (
+                      <li key={c.id} className="rounded-2xl bg-white/70 px-4 py-3">
+                        <p className="text-[12px] font-bold text-ink/50">{c.author_name}</p>
+                        <p className="text-[13px]">{c.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex gap-2">
+                    <input
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      placeholder="Add a comment…"
+                      className={field}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!commentText.trim()) return;
+                        addComment.mutate(
+                          { body: commentText.trim(), author_name: authorName, author_id: authorId },
+                          { onSuccess: () => setCommentText("") },
+                        );
+                      }}
+                      className="rounded-full bg-ink px-4 py-2 text-[12px] font-bold text-cream"
+                    >
+                      Post
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {tab === "Notes" ? (
+            <div className="space-y-4">
+              <label className={label} htmlFor="i-notes">
+                Notes
+              </label>
+              <textarea
+                id="i-notes"
+                rows={8}
+                value={form.notes ?? ""}
+                onChange={(e) => set("notes", e.target.value || null)}
+                className={field}
+              />
               {itemId ? (
                 <div className="rounded-2xl border border-border bg-white/60 p-4">
                   <p className={label}>Links</p>
@@ -630,170 +794,6 @@ export function ItemDialog({
                   Save this plan first to attach links and documents.
                 </p>
               ) : null}
-            </>
-          ) : null}
-
-          {tab === "Cost" ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className={label} htmlFor="i-est">
-                  Estimated cost
-                </label>
-                <input
-                  id="i-est"
-                  type="number"
-                  step="0.01"
-                  value={form.cost_estimated ?? ""}
-                  onChange={(e) =>
-                    set("cost_estimated", e.target.value ? Number(e.target.value) : null)
-                  }
-                  className={field}
-                />
-              </div>
-              <div>
-                <label className={label} htmlFor="i-act">
-                  Actual cost
-                </label>
-                <input
-                  id="i-act"
-                  type="number"
-                  step="0.01"
-                  value={form.cost_actual ?? ""}
-                  onChange={(e) =>
-                    set("cost_actual", e.target.value ? Number(e.target.value) : null)
-                  }
-                  className={field}
-                />
-              </div>
-              <div>
-                <label className={label} htmlFor="i-paidby">
-                  Paid by
-                </label>
-                <select
-                  id="i-paidby"
-                  value={form.paid_by ?? ""}
-                  onChange={(e) => set("paid_by", e.target.value || null)}
-                  className={field}
-                >
-                  <option value="">—</option>
-                  {travelers.map((t) => (
-                    <option key={t.id} value={t.name}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-end gap-4">
-                <label className="flex items-center gap-2 text-[13px] font-semibold">
-                  <input
-                    type="checkbox"
-                    checked={!!form.paid}
-                    onChange={(e) => set("paid", e.target.checked)}
-                  />
-                  Paid
-                </label>
-                <label className="flex items-center gap-2 text-[13px] font-semibold">
-                  <input
-                    type="checkbox"
-                    checked={!!form.shared_expense}
-                    onChange={(e) => set("shared_expense", e.target.checked)}
-                  />
-                  Shared expense
-                </label>
-              </div>
-              <div className="sm:col-span-2">
-                <span className={label}>Split between</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {travelers.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => toggleName("split_between", t.name)}
-                      className={cn(
-                        "rounded-full border px-2.5 py-1 text-[11px] font-bold",
-                        (form.split_between ?? []).includes(t.name)
-                          ? "border-ink bg-ink text-cream"
-                          : "border-border bg-white/70 text-ink/55",
-                      )}
-                    >
-                      {t.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {tab === "People" ? (
-            <div>
-              <span className={label}>Who's going</span>
-              <div className="flex flex-wrap gap-1.5">
-                {travelers.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => toggleName("participants", t.name)}
-                    className={cn(
-                      "rounded-full border px-3 py-1.5 text-[12px] font-bold",
-                      (form.participants ?? []).includes(t.name)
-                        ? "border-ink bg-ink text-cream"
-                        : "border-border bg-white/70 text-ink/55",
-                    )}
-                  >
-                    {t.name}
-                  </button>
-                ))}
-              </div>
-
-              {itemId ? (
-                <div className="mt-6">
-                  <span className={label}>Comments</span>
-                  <ul className="space-y-2">
-                    {(comments ?? []).map((c) => (
-                      <li key={c.id} className="rounded-2xl bg-white/70 px-4 py-3">
-                        <p className="text-[12px] font-bold text-ink/50">{c.author_name}</p>
-                        <p className="text-[13px]">{c.body}</p>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-3 flex gap-2">
-                    <input
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      placeholder="Add a comment…"
-                      className={field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!commentText.trim()) return;
-                        addComment.mutate(
-                          { body: commentText.trim(), author_name: authorName, author_id: authorId },
-                          { onSuccess: () => setCommentText("") },
-                        );
-                      }}
-                      className="rounded-full bg-ink px-4 py-2 text-[12px] font-bold text-cream"
-                    >
-                      Post
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          {tab === "Notes" ? (
-            <div>
-              <label className={label} htmlFor="i-notes">
-                Notes
-              </label>
-              <textarea
-                id="i-notes"
-                rows={8}
-                value={form.notes ?? ""}
-                onChange={(e) => set("notes", e.target.value || null)}
-                className={field}
-              />
             </div>
           ) : null}
         </div>
