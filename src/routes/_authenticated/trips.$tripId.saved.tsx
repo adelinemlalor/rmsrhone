@@ -19,6 +19,8 @@ import {
   type SavedPlace,
 } from "@/lib/travel";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/trips/$tripId/saved")({
   head: () => ({
@@ -35,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/trips/$tripId/saved")({
 });
 
 const field =
-  "w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[14px] outline-none focus:border-brand";
+  "w-full rounded-xl border border-border bg-card px-3 py-2.5 text-[14px] outline-none focus:border-brand";
 
 function SavedPage() {
   const { tripId } = Route.useParams();
@@ -51,6 +53,7 @@ function SavedPage() {
   const [priority, setPriority] = useState(PRIORITIES[1] ?? "Want to Do");
   const [notes, setNotes] = useState("");
   const [cost, setCost] = useState("");
+  const [url, setUrl] = useState("");
   const [filter, setFilter] = useState("All");
 
   if (!trip) return null;
@@ -75,8 +78,8 @@ function SavedPage() {
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
-      <div>
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0">
         <div className="mb-5 flex flex-wrap gap-2">
           {["All", ...PLACE_CATEGORIES].map((c) => (
             <button
@@ -103,9 +106,9 @@ function SavedPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {shown.map((p) => (
-              <Panel key={p.id} className="flex flex-col">
+              <Panel key={p.id} className="flex min-w-0 flex-col [overflow-wrap:anywhere]">
                 <div className="flex items-start justify-between gap-2">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[11px] font-bold tracking-[0.14em] text-ink/40 uppercase">
                       {p.category}
                     </p>
@@ -113,9 +116,15 @@ function SavedPage() {
                       {p.name}
                     </h3>
                   </div>
-                  <span title={p.priority}>{PRIORITY_ICON[p.priority] ?? ""}</span>
+                  <span className="shrink-0" title={p.priority}>{PRIORITY_ICON[p.priority] ?? ""}</span>
                 </div>
                 {p.notes ? <p className="mt-2 text-[13px] text-ink/60">{p.notes}</p> : null}
+                {p.url && /^https?:\/\//i.test(p.url) ? (
+                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-start gap-1.5 text-[13px] font-semibold text-primary underline underline-offset-4">
+                    <ExternalLink className="mt-0.5 size-3.5 shrink-0" />
+                    <span className="min-w-0">{p.url}</span>
+                  </a>
+                ) : null}
                 <p className="mt-2 text-[12px] text-ink/45">
                   {[p.city, p.estimated_cost ? money(p.estimated_cost, trip.currency) : null]
                     .filter(Boolean)
@@ -156,7 +165,7 @@ function SavedPage() {
         )}
       </div>
 
-      <Panel className="h-fit">
+      <Panel className="h-fit min-w-0">
         <SectionLabel>Save an idea</SectionLabel>
         <div className="space-y-3">
           <input
@@ -197,10 +206,32 @@ function SavedPage() {
             placeholder="Why it caught your eye…"
             className={field}
           />
-          <button
+          <input
+            type="text"
+            inputMode="url"
+            aria-label="Place link"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Link (optional)"
+            className={field}
+          />
+          <Button
             type="button"
+            disabled={savePlace.isPending || !name.trim()}
             onClick={async () => {
               if (!name.trim()) return;
+              let link: string | null = null;
+              if (url.trim()) {
+                try {
+                  const parsed = new URL(/^https?:\/\//i.test(url.trim()) ? url.trim() : `https://${url.trim()}`);
+                  if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname.includes(".")) throw new Error("Invalid link");
+                  link = parsed.href;
+                } catch {
+                  toast.error("Please enter a valid website link");
+                  return;
+                }
+              }
+              try {
               await savePlace.mutateAsync({
                 name: name.trim(),
                 category,
@@ -208,16 +239,21 @@ function SavedPage() {
                 notes: notes.trim() || null,
                 estimated_cost: cost ? Number(cost) : null,
                 destination: trip.primary_destination,
+                url: link,
               });
               setName("");
               setNotes("");
               setCost("");
+              setUrl("");
               toast.success("Saved");
+              } catch {
+                toast.error("Could not save this place. Please try again.");
+              }
             }}
-            className="w-full rounded-full bg-brand px-4 py-2.5 text-[13px] font-bold text-cream"
+            className="h-auto w-full rounded-full px-4 py-2.5 text-[13px] font-bold"
           >
-            Save place
-          </button>
+            {savePlace.isPending ? "Saving…" : "Save place"}
+          </Button>
         </div>
       </Panel>
     </div>

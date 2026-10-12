@@ -4,6 +4,7 @@ import { useAllSavedPlaces, useTrips } from "@/lib/data";
 import { EmptyState, Panel } from "@/components/bits";
 import { money, PLACE_CATEGORIES, PRIORITY_ICON } from "@/lib/travel";
 import { cn } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({
@@ -85,9 +86,9 @@ function ExplorePage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {shown.map((p) => (
-              <Panel key={p.id} className="flex flex-col gap-2">
+              <Panel key={p.id} className="flex min-w-0 flex-col gap-2 [overflow-wrap:anywhere]">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[11px] font-bold tracking-[0.14em] text-ink/40 uppercase">
                       {p.category}
                     </p>
@@ -103,6 +104,12 @@ function ExplorePage() {
                   {p.city ?? p.destination ?? "—"} · {tripName.get(p.trip_id) ?? "Trip"}
                 </p>
                 {p.notes ? <p className="text-[13px] text-ink/60">{p.notes}</p> : null}
+                {p.url && /^https?:\/\//i.test(p.url) ? (
+                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-start gap-1.5 text-[13px] font-semibold text-primary underline underline-offset-4">
+                    <ExternalLink className="mt-0.5 size-3.5 shrink-0" />
+                    <span className="min-w-0">{p.url}</span>
+                  </a>
+                ) : null}
                 <div className="mt-auto flex items-center justify-between pt-2 text-[12px] font-bold">
                   <span className={p.scheduled ? "text-accent" : "text-ink/40"}>
                     {p.scheduled ? "Scheduled" : "Idea"}
