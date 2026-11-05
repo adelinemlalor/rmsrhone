@@ -5,6 +5,17 @@ import { useSaveTrip } from "@/lib/data";
 import { TRIP_TYPES } from "@/lib/travel";
 import { cn } from "@/lib/utils";
 
+import { hasErrors, validateTrip, type TripErrors } from "@/lib/validation";
+
+function FieldError({ message }: { message?: string | undefined }) {
+  if (!message) return null;
+  return (
+    <p role="alert" className="mt-1.5 text-[12px] font-semibold text-destructive">
+      {message}
+    </p>
+  );
+}
+
 export const Route = createFileRoute("/_authenticated/trips/new")({
   head: () => ({
     meta: [
@@ -42,11 +53,15 @@ function NewTripPage() {
   const [budget, setBudget] = useState("");
   const [cover, setCover] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<TripErrors>({});
 
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    const problems = validateTrip({ name, start, end, budget });
+    setErrors(problems);
+    if (hasErrors(problems)) return;
     try {
       const trip = await saveTrip.mutateAsync({
         owner_id: user.id,
@@ -83,19 +98,23 @@ function NewTripPage() {
         Only a name is required — everything else can come later.
       </p>
 
-      <form onSubmit={submit} className="mt-8 max-w-[720px] space-y-5">
+      <form onSubmit={submit} noValidate className="mt-8 max-w-[720px] space-y-5">
         <div>
           <label className={label} htmlFor="trip-name">
             Trip name
           </label>
           <input
             id="trip-name"
-            required
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setErrors((x) => ({ ...x, name: undefined }));
+            }}
             placeholder="Two weeks in Brazil"
-            className={field}
+            aria-invalid={!!errors.name}
+            className={field + (errors.name ? " border-destructive" : "")}
           />
+          <FieldError message={errors.name} />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -209,9 +228,14 @@ function NewTripPage() {
               id="end"
               type="date"
               value={end}
-              onChange={(e) => setEnd(e.target.value)}
-              className={field}
+              onChange={(e) => {
+                setEnd(e.target.value);
+                setErrors((x) => ({ ...x, end: undefined }));
+              }}
+              aria-invalid={!!errors.end}
+              className={field + (errors.end ? " border-destructive" : "")}
             />
+            <FieldError message={errors.end} />
           </div>
           <div>
             <label className={label} htmlFor="currency">
@@ -233,10 +257,15 @@ function NewTripPage() {
               type="number"
               min="0"
               value={budget}
-              onChange={(e) => setBudget(e.target.value)}
+              onChange={(e) => {
+                setBudget(e.target.value);
+                setErrors((x) => ({ ...x, budget: undefined }));
+              }}
               placeholder="4000"
-              className={field}
+              aria-invalid={!!errors.budget}
+              className={field + (errors.budget ? " border-destructive" : "")}
             />
+            <FieldError message={errors.budget} />
           </div>
         </div>
 
