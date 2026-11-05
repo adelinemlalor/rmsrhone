@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/trips", label: "Trips" },
+  { to: "/plans", label: "Plans" },
   { to: "/starred", label: "Starred" },
   { to: "/explore", label: "Explore" },
-  { to: "/shared", label: "Shared With Me" },
-  { to: "/profile", label: "Profile" },
+  { to: "/shared", label: "Shared" },
   { to: "/settings", label: "Settings" },
 ] as const;
 
@@ -50,7 +50,7 @@ export function AppShell({
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-7 text-[13px] font-semibold text-ink/60 md:flex">
+          <nav className="hidden items-center gap-5 text-[13px] font-semibold whitespace-nowrap text-ink/60 lg:flex">
             {NAV.map((n) => (
               <Link
                 key={n.to}
@@ -66,7 +66,7 @@ export function AppShell({
           <div className="flex items-center gap-2">
             <Link
               to="/trips/new"
-              className="hidden rounded-full bg-brand px-4 py-2 text-[13px] font-bold text-cream transition-opacity hover:opacity-90 sm:block"
+              className="hidden rounded-full bg-brand px-4 py-2 text-[13px] font-bold whitespace-nowrap text-cream transition-opacity hover:opacity-90 sm:block"
             >
               + New trip
             </Link>
@@ -93,7 +93,7 @@ export function AppShell({
         {children}
       </div>
 
-      <nav className="sticky bottom-0 z-30 mt-8 flex items-center justify-around border-t border-border bg-cream/95 px-2 py-2 backdrop-blur md:hidden">
+      <nav className="sticky bottom-0 z-30 mt-8 flex items-center justify-around overflow-x-auto border-t border-border bg-cream/95 px-2 py-2 backdrop-blur lg:hidden">
         {NAV.map((n) => (
           <Link
             key={n.to}
