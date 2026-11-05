@@ -70,7 +70,7 @@ function TripLayout() {
           ) : (
             <div className="grid size-full place-items-center text-5xl">🧭</div>
           )}
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent p-6">
+          <div className="theme-light absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent p-6">
             <p className="text-[11px] font-bold tracking-[0.16em] text-cream/80 uppercase">
               {trip.primary_destination ?? "Destination TBD"}
             </p>

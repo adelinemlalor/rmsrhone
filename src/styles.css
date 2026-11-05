@@ -106,6 +106,40 @@
   --ring: var(--brand);
 }
 
+/* ---------- Dark mode: same "Luxe Juniper" family, re-stepped for a dark surface ---------- */
+.dark {
+  color-scheme: dark;
+  --brand: oklch(0.74 0.075 155);
+  --brand-deep: oklch(0.84 0.06 155);
+  --accent: oklch(0.74 0.06 150);
+  --sun: oklch(0.78 0.05 50);
+  --clay: oklch(0.42 0.02 64.8);
+  --cream: oklch(0.205 0.008 155);
+  --cream-2: oklch(0.275 0.01 155);
+  --ink: oklch(0.935 0.006 91);
+  --surface: oklch(0.255 0.009 155 / 0.85);
+
+  --card: oklch(0.255 0.009 155 / 0.85);
+  --popover: oklch(0.25 0.009 155);
+  --muted-foreground: oklch(0.76 0.03 60);
+  --destructive: oklch(0.68 0.17 25);
+  --border: oklch(0.935 0.006 91 / 0.14);
+  --input: oklch(0.935 0.006 91 / 0.2);
+
+  /* Cards across the app are written as bg-white/70 etc. — repaint "white" as the raised dark surface. */
+  --color-white: oklch(0.255 0.009 155);
+  --shadow-soft: 0 10px 30px -18px oklch(0 0 0 / 0.7);
+  --shadow-lift: 0 18px 40px -20px oklch(0 0 0 / 0.6);
+}
+/* Text sitting on top of photos keeps light-theme ink/cream in both themes. */
+.dark .theme-light {
+  --ink: oklch(0.2495 0.0009 0);
+  --cream: oklch(0.9372 0.0046 91.2);
+}
+.dark .panel {
+  background-color: oklch(0.255 0.009 155 / 0.85);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
