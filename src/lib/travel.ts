@@ -86,6 +86,7 @@ export interface AgendaItem {
   personal_for: string | null;
   details: Record<string, unknown>;
   sort_order: number;
+  created_at?: string;
   saved_place_id: string | null;
 }
 

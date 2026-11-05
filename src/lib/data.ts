@@ -154,6 +154,8 @@ export function useTripInvalidation(tripId: string) {
     void qc.invalidateQueries({ queryKey: ["documents", tripId] });
     void qc.invalidateQueries({ queryKey: ["checklist", tripId] });
     void qc.invalidateQueries({ queryKey: ["trips"] });
+    void qc.invalidateQueries({ queryKey: ["agenda-all"] });
+    void qc.invalidateQueries({ queryKey: ["stars"] });
   };
 }
 
@@ -589,5 +591,24 @@ export function useToggleStar() {
     onSettled: () => {
       void qc.invalidateQueries({ queryKey: ["stars"] });
     },
+  });
+}
+
+/* ---------------- all plans across trips (Find / Dashboard / Calendar) ---------------- */
+
+export type PlanWithTrip = AgendaItem & {
+  trips: Pick<Trip, "id" | "name" | "primary_destination" | "currency" | "start_date" | "end_date"> | null;
+};
+
+/** Every plan the signed-in user can see, across all their trips (RLS does the scoping). */
+export function useAllPlans() {
+  return useQuery({
+    queryKey: ["agenda-all"],
+    queryFn: () =>
+      unwrap<PlanWithTrip[]>(
+        supabase
+          .from("agenda_items")
+          .select("*, trips(id, name, primary_destination, currency, start_date, end_date)") as any,
+      ),
   });
 }
