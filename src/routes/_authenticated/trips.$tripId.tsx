@@ -3,6 +3,7 @@ import { createFileRoute, Link, Outlet, useRouter } from "@tanstack/react-router
 import { Pencil } from "lucide-react";
 import { useAgenda, useSaveTrip, useTravelers, useTrip } from "@/lib/data";
 import { AvatarStack } from "@/components/bits";
+import { downloadCSV } from "@/lib/csv";
 import { buildICS, countdownLabel, formatRange, money, itemCost } from "@/lib/travel";
 
 export const Route = createFileRoute("/_authenticated/trips/$tripId")({
@@ -143,6 +144,15 @@ function TripLayout() {
               className="rounded-full border border-border px-4 py-2 text-[12px] font-bold text-ink/60"
             >
               Export .ics
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadCSV(trip, items ?? [])}
+              disabled={!items?.length}
+              title="Download every plan as a spreadsheet (opens in Excel or Google Sheets)"
+              className="rounded-full border border-border px-4 py-2 text-[12px] font-bold text-ink/60 disabled:opacity-40"
+            >
+              Export CSV
             </button>
             <button
               type="button"
