@@ -20,6 +20,7 @@ import {
   type SavedPlace,
 } from "@/lib/travel";
 import { cn } from "@/lib/utils";
+import { ConfirmDelete } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 
@@ -212,16 +213,19 @@ function SavedPage() {
                   >
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => {
+                  <ConfirmDelete
+                    title={`Remove "${p.name}"?`}
+                    description="This saved idea will be deleted. Plans already scheduled from it stay on the itinerary."
+                    confirmLabel="Remove"
+                    onConfirm={async () => {
                       if (editingId === p.id) resetForm();
-                      deletePlace.mutate(p.id);
+                      await deletePlace.mutateAsync(p.id);
                     }}
-                    className="text-[12px] font-bold text-ink/40"
                   >
-                    Remove
-                  </button>
+                    <button type="button" className="text-[12px] font-bold text-ink/40">
+                      Remove
+                    </button>
+                  </ConfirmDelete>
                 </div>
               </Panel>
             ))}

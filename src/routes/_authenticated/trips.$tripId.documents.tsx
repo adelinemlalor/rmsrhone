@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { ConfirmDelete } from "@/components/confirm-dialog";
 import { documentUrl, useDeleteDocument, useDocuments, useUploadDocument } from "@/lib/data";
 import { EmptyState, Panel, SectionLabel } from "@/components/bits";
 import { DOC_CATEGORIES } from "@/lib/travel";
@@ -63,13 +64,17 @@ function DocumentsPage() {
                   >
                     Open
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => remove.mutate(d)}
-                    className="text-ink/40"
+                  <ConfirmDelete
+                    title={`Delete "${d.name}"?`}
+                    description="The file will be permanently removed from this trip."
+                    onConfirm={async () => {
+                      await remove.mutateAsync(d);
+                    }}
                   >
-                    Delete
-                  </button>
+                    <button type="button" className="text-ink/40">
+                      Delete
+                    </button>
+                  </ConfirmDelete>
                 </div>
               </li>
             ))}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useDeleteTrip, useTrips } from "@/lib/data";
+import { ConfirmDelete } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/bits";
 import { countdownLabel, formatRange, TRIP_STATUSES } from "@/lib/travel";
 import type { Trip } from "@/lib/travel";
@@ -28,7 +29,6 @@ const FILTERS = ["Upcoming", "All", ...TRIP_STATUSES, "Archived"] as const;
 
 function TripCard({ trip }: { trip: Trip }) {
   const deleteTrip = useDeleteTrip();
-  const [confirming, setConfirming] = useState(false);
 
   return (
     <div className="group relative overflow-hidden rounded-[26px] border border-border bg-white/70 transition-shadow hover:shadow-[0_20px_50px_-32px_rgba(60,40,25,0.6)]">
@@ -60,34 +60,21 @@ function TripCard({ trip }: { trip: Trip }) {
         </div>
       </Link>
 
-      {confirming ? (
-        <div className="absolute top-3 right-3 flex items-center gap-2 rounded-full bg-cream/95 px-2 py-1 shadow-sm backdrop-blur">
-          <span className="text-[11px] font-bold text-ink">Delete?</span>
-          <button
-            type="button"
-            onClick={() => deleteTrip.mutate(trip.id)}
-            className="rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-red-700"
-          >
-            Yes
-          </button>
-          <button
-            type="button"
-            onClick={() => setConfirming(false)}
-            className="rounded-full bg-ink/10 px-2 py-0.5 text-[11px] font-bold text-ink hover:bg-ink/20"
-          >
-            No
-          </button>
-        </div>
-      ) : (
+      <ConfirmDelete
+        title={`Delete "${trip.name}"?`}
+        description="This permanently deletes the trip and everything in it: plans, saved places, documents, checklist and travelers. This can't be undone."
+        confirmLabel="Delete trip"
+        onConfirm={() => deleteTrip.mutateAsync(trip.id).then(() => undefined)}
+      >
         <button
           type="button"
-          onClick={() => setConfirming(true)}
           title="Delete trip"
-          className="absolute top-3 right-3 grid size-8 place-items-center rounded-full bg-cream/90 text-ink/60 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover:opacity-100"
+          aria-label={`Delete ${trip.name}`}
+          className="absolute top-3 right-3 grid size-8 place-items-center rounded-full bg-cream/90 text-ink/60 opacity-0 shadow-sm backdrop-blur transition-opacity group-hover:opacity-100 hover:text-red-600 focus:opacity-100"
         >
           <Trash2 className="size-4" />
         </button>
-      )}
+      </ConfirmDelete>
     </div>
   );
 }
