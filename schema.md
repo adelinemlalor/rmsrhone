@@ -129,8 +129,10 @@ In plain English:
 - A **plan** can have comments, links, documents and opt-outs.
 - **Users ↔ plans is many-to-many through `stars`.** One user stars many plans, and a plan on a shared trip can be starred by many travelers.
 
-## Compared with PLAN.md §3
+## Compared with PLAN.md §3 (did the agent build what I designed?)
 
 - ✅ `users`, `trips` and `agenda_items` match the plan: one user has many trips, and one trip has many plans.
 - ⚠️ **`trips.owner_id` has no foreign key to `auth.users`.** The prototype only stores the id. RLS still protects the data, but deleting a user wouldn't clean up their trips automatically. I noticed this while writing this file and left it unchanged, because adding the constraint is a risky change to a live database.
 - ✅ `stars` matches the plan exactly: `id`, `user_id`, `agenda_item_id`, `created_at`, plus the unique pair. Unlike `trips.owner_id`, it **does** have real foreign keys.
+- ✅ Relationships match: users 1→N trips 1→N plans, and users N↔M plans through `stars`. The prototype adds a second many-to-many (users ↔ trips through `trip_travelers`) that PLAN.md mentions only as "already in place."
+- ➕ The real `agenda_items` table has about 40 more columns than the plan listed (contacts, cancellation policy, transport, travel time to the next plan). The plan listed only the columns the assignment features use.

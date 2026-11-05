@@ -92,3 +92,28 @@ The look is warm and editorial, like a leather travel journal:
 - **Least sure I can build:** the **data isolation test**. It has to run the app's real Supabase migrations and row-level security policies against an in-memory Postgres, which means imitating Supabase's `auth.uid()` and roles. **Fallback:** test the same policies with a smaller hand-written schema.
 - **Database changes on Lovable Cloud:** I can't apply migrations from my laptop, so the `stars` table has to be applied through Lovable while it's on the `feature/stars` branch.
 - **What I'll cut first if I run out of time:** **Dark mode** (#11), then **Calendar view** (#10). Both are nice to have, and none of the spine features depend on them.
+
+---
+
+## Plan vs. Reality
+
+*Added at the end. Nothing above this line was changed after PR #2.*
+
+| Planned feature | Shipped / Changed / Cut | Status | Learning | What changed and why (one line) |
+|---|---|---|---|---|
+| 1. Sign up and login | Changed | Done | Read existing code before planning to rebuild it | Auth already worked from the prototype, so the PR fixed the experience instead: friendly errors, inline field messages, a labeled Log out, and a duplicate sign-up that falsely said "check your inbox." |
+| 2. Data model | Changed | Done | Write the schema doc *against* the real database, not from memory | `users` is really `auth.users` + `profiles`, and `trips.owner_id` turned out to have **no foreign key**. RLS still protects the data, so I documented it rather than altering a live table. |
+| 3. Create / read / update / delete | Changed | Done | "It has a delete button" ≠ "it has a safe delete" | Added the plan detail page as planned. Confirmation also went in front of trips, saved places and documents, because those deleted instantly too. |
+| 4. Validation | Changed | Done | A required field the UI never asks for is a silent bug | The plan dialog had **no category picker at all**, so every plan saved as "Activity." The picker was added and made required. |
+| 5. Stars | Shipped | Done | Some steps belong to a different tool; route them through a branch | Table and RLS exactly as planned. The migration had to be applied by Lovable on `feature/stars` so `main` stayed PR-only, and Lovable also slipped in an unrequested dependency bump. |
+| 6. Find things | Changed | Done | Put filters in the URL so state is shareable and testable | Added a ★ starred-only filter and an A→Z sort beyond the plan. Search covers 10 fields. |
+| 7. Dashboard | Changed | Done | Real data reshapes "obvious" stats | Average is **per paid plan**, because only 4 of my 68 plans have costs (a per-plan average would read about $16). My top category is really Activity, not Hotel. Added "% booked." |
+| 8. Random pick | Changed | Done | Small features get better with one honest constraint | Weighted by priority (Must Do ×3) and respects the current filters, so "Restaurant · Dinner" picks dinner. Neither was in the plan. |
+| 9. CSV export | Shipped | Done | Test the escaping, not the happy path | Built as planned. Notes with commas and line breaks were the real risk, so they have unit tests. |
+| 10. Calendar view | Shipped | Done | Color is computable, so check it with a tool instead of eyeballing | Built as planned. The first trip palette failed a color-blind check and was reordered, and trip names are always shown too. |
+| 11. Dark mode | Shipped | Done | Global tokens beat 60 one-off edits | It was my first planned cut, but it shipped. Overriding Tailwind's `white` token fixed about 60 hardcoded cards at once, and photo overlays needed a light-theme scope. |
+| Test 1: data isolation | Changed | Done | The scariest item can be the quickest once the approach is right | My "least sure" item worked on the first run: PGlite replays every real migration (17 at first, 18 after Stars). Extended to cover stars in Feature 5. |
+| Test 2: dashboard stat | Shipped | Done | Red/green only means something if the break is realistic | Same Given/When/Then as planned. The red run used an easy mistake (estimate over actual), plus an extra empty-account check. |
+| Deploy after every PR | Changed | Backlogged | Hosting has its own manual step | Lovable syncs every merge to `main`, but the live URL updates only when **Publish → Update** is clicked in Lovable. |
+| *(not planned)* "Upcoming" trips filter | — | Backlogged | Audits surface bugs outside the plan | Found while testing: "Upcoming" shows trips that already ended, because it checks status, not dates. Logged for later. |
+| *(not planned)* Foreign key on `trips.owner_id` | — | Backlogged | Some fixes are riskier than the bug | Needs a careful migration on live data, so it's left for a future PR. |
