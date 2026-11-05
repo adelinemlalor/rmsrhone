@@ -27,7 +27,7 @@ export function AppShell({
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    await navigate({ to: "/auth", replace: true });
+    await navigate({ to: "/", replace: true });
   }
 
   return (
@@ -80,9 +80,10 @@ export function AppShell({
               onClick={() => void signOut()}
               title="Sign out"
               aria-label="Sign out"
-              className="grid size-9 place-items-center rounded-full border border-border text-ink/55 transition-colors hover:text-ink"
+              className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-[12px] font-bold text-ink/60 transition-colors hover:text-ink"
             >
               <LogOut className="size-4" />
+              <span className="hidden sm:inline">Log out</span>
             </button>
 
           </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { friendlyAuthError, validateAuthForm, type AuthFieldErrors } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -34,6 +35,7 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
@@ -44,11 +46,14 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setBusy(true);
     setError(null);
+    const problems = validateAuthForm(email, password, mode);
+    setFieldErrors(problems);
+    if (problems.email || problems.password) return;
+    setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
           options: {
@@ -57,7 +62,10 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        setSent(true);
+        // Supabase returns an empty identities list when the email is already registered.
+        if (data.user && data.user.identities?.length === 0) throw new Error("User already registered");
+        if (data.session) await navigate({ to: "/trips", replace: true });
+        else setSent(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
@@ -67,7 +75,7 @@ function AuthPage() {
         await navigate({ to: "/trips", replace: true });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(friendlyAuthError(err instanceof Error ? err.message : null, mode));
     } finally {
       setBusy(false);
     }
@@ -114,7 +122,7 @@ function AuthPage() {
                   : "Sign up with your email — we'll send a confirmation link."}
               </p>
 
-              <form onSubmit={submit} className="mt-6 space-y-3">
+              <form onSubmit={submit} noValidate className="mt-6 space-y-3">
                 {mode === "signup" && (
                   <input
                     value={fullName}
@@ -124,25 +132,46 @@ function AuthPage() {
                     className={field}
                   />
                 )}
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@email.com"
-                  autoComplete="email"
-                  className={field}
-                />
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                  className={field}
-                />
+                <div>
+                  <input
+                    type="email"
+                    aria-label="Email"
+                    aria-invalid={!!fieldErrors.email}
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setFieldErrors((f) => ({ ...f, email: undefined }));
+                    }}
+                    placeholder="you@email.com"
+                    autoComplete="email"
+                    className={field + (fieldErrors.email ? " border-destructive" : "")}
+                  />
+                  {fieldErrors.email && (
+                    <p className="mt-1.5 px-2 text-[12px] font-semibold text-destructive">
+                      {fieldErrors.email}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    aria-label="Password"
+                    aria-invalid={!!fieldErrors.password}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setFieldErrors((f) => ({ ...f, password: undefined }));
+                    }}
+                    placeholder={mode === "signup" ? "Password (6+ characters)" : "Password"}
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    className={field + (fieldErrors.password ? " border-destructive" : "")}
+                  />
+                  {fieldErrors.password && (
+                    <p className="mt-1.5 px-2 text-[12px] font-semibold text-destructive">
+                      {fieldErrors.password}
+                    </p>
+                  )}
+                </div>
 
                 {error && (
                   <p className="rounded-2xl bg-destructive/10 px-4 py-3 text-[13px] text-destructive">
@@ -165,6 +194,7 @@ function AuthPage() {
                   onClick={() => {
                     setMode(mode === "signin" ? "signup" : "signin");
                     setError(null);
+                    setFieldErrors({});
                   }}
                   className="font-bold text-brand"
                 >
