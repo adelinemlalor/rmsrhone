@@ -77,6 +77,19 @@ RLS: you can read or update a trip if you **own it** or are listed in `trip_trav
 
 RLS: same rule as its trip. Trip members can read, add, edit and delete its plans.
 
+### `stars` — junction table (users ↔ plans)
+One row means "this user starred this plan." There is one table for everyone, not one per user. Added in Feature 5 (`drizzle/migrations/0001_create_stars_junction_table.sql`).
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | uuid | **PK** |
+| `user_id` | uuid | **FK → auth.users.id** (deleted with the user) |
+| `agenda_item_id` | uuid | **FK → agenda_items.id** (deleted with the plan) |
+| `created_at` | date/time | used to sort the Starred page |
+
+Unique (`user_id`, `agenda_item_id`), so you can't star the same plan twice. Indexed on `user_id`.
+RLS: you can only **see** and **remove** your own stars, and you can only **add** a star for yourself on a plan in a trip you belong to.
+
 ## Supporting tables (from the Lovable prototype)
 
 | Table | Key columns | Relationship |
@@ -106,15 +119,18 @@ erDiagram
   AGENDA_ITEMS ||--o{ COMMENTS : discussion
   AGENDA_ITEMS ||--o{ ITEM_LINKS : links
   AGENDA_ITEMS ||--o{ AGENDA_ITEM_OPTOUTS : "skipped by"
+  USERS ||--o{ STARS : stars
+  AGENDA_ITEMS ||--o{ STARS : "starred in"
 ```
 
 In plain English:
 - A **user** owns many **trips**. Other users join a trip through **trip_travelers** (many-to-many).
 - A **trip** has many **plans** (`agenda_items`), saved ideas, documents and checklist items. Deleting a trip deletes all of them.
 - A **plan** can have comments, links, documents and opt-outs.
+- **Users ↔ plans is many-to-many through `stars`.** One user stars many plans, and a plan on a shared trip can be starred by many travelers.
 
 ## Compared with PLAN.md §3
 
 - ✅ `users`, `trips` and `agenda_items` match the plan: one user has many trips, and one trip has many plans.
 - ⚠️ **`trips.owner_id` has no foreign key to `auth.users`.** The prototype only stores the id. RLS still protects the data, but deleting a user wouldn't clean up their trips automatically. I noticed this while writing this file and left it unchanged, because adding the constraint is a risky change to a live database.
-- ⏳ `stars` (the users ↔ plans junction table) arrives with Feature 5.
+- ✅ `stars` matches the plan exactly: `id`, `user_id`, `agenda_item_id`, `created_at`, plus the unique pair. Unlike `trips.owner_id`, it **does** have real foreign keys.

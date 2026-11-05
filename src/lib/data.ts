@@ -523,3 +523,71 @@ export function useToggleOptout(tripId: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["optouts", tripId] }),
   });
 }
+
+/* ---------------- stars (user ↔ plan junction table) ---------------- */
+
+export type StarredPlan = {
+  created_at: string;
+  agenda_items:
+    | (AgendaItem & { trips: Pick<Trip, "id" | "name" | "primary_destination" | "currency"> | null })
+    | null;
+};
+
+/** Ids of every plan the signed-in user has starred (RLS returns only their own rows). */
+export function useMyStars() {
+  return useQuery({
+    queryKey: ["stars"],
+    queryFn: async () => {
+      const rows = await unwrap<{ agenda_item_id: string }[]>(
+        (supabase as any).from("stars").select("agenda_item_id"),
+      );
+      return new Set(rows.map((r) => r.agenda_item_id));
+    },
+  });
+}
+
+/** Starred plans with their trip, newest star first — powers the /starred page. */
+export function useStarredPlans() {
+  return useQuery({
+    queryKey: ["stars", "plans"],
+    queryFn: () =>
+      unwrap<StarredPlan[]>(
+        (supabase as any)
+          .from("stars")
+          .select("created_at, agenda_items(*, trips(id, name, primary_destination, currency))")
+          .order("created_at", { ascending: false }),
+      ),
+  });
+}
+
+export function useToggleStar() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ itemId, starred }: { itemId: string; starred: boolean }) => {
+      const { data } = await supabase.auth.getUser();
+      const userId = data.user?.id;
+      if (!userId) throw new Error("Please sign in again");
+      const stars = (supabase as any).from("stars");
+      if (starred) {
+        return unwrap<null>(stars.delete().eq("agenda_item_id", itemId).eq("user_id", userId));
+      }
+      return unwrap<null>(stars.insert({ agenda_item_id: itemId, user_id: userId }));
+    },
+    // Flip the star instantly, roll back if the database says no.
+    onMutate: async ({ itemId, starred }) => {
+      await qc.cancelQueries({ queryKey: ["stars"], exact: true });
+      const prev = qc.getQueryData<Set<string>>(["stars"]);
+      const next = new Set(prev ?? []);
+      if (starred) next.delete(itemId);
+      else next.add(itemId);
+      qc.setQueryData(["stars"], next);
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.prev) qc.setQueryData(["stars"], ctx.prev);
+    },
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ["stars"] });
+    },
+  });
+}

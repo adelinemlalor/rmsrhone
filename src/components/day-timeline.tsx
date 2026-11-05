@@ -11,6 +11,7 @@ import {
   type Traveler,
 } from "@/lib/travel";
 import { useImageUrl } from "@/lib/data";
+import { StarButton } from "@/components/star-button";
 import { cn } from "@/lib/utils";
 
 function ItemPhoto({ url, alt }: { url: string; alt: string }) {
@@ -83,7 +84,7 @@ export function DayTimeline({
             <button
               type="button"
               onClick={() => onSelect(item)}
-              className="w-full rounded-[22px] border border-border bg-white/75 p-4 text-left transition-shadow hover:shadow-[0_16px_40px_-30px_rgba(60,40,25,0.7)]"
+              className="w-full rounded-[22px] border border-border bg-white/75 p-4 pr-12 text-left transition-shadow hover:shadow-[0_16px_40px_-30px_rgba(60,40,25,0.7)]"
             >
               <div className="flex items-start gap-3">
                 <CategoryIcon category={item.category} />
@@ -168,6 +169,7 @@ export function DayTimeline({
                 {item.image_url ? <ItemPhoto url={item.image_url} alt={item.title} /> : null}
               </div>
             </button>
+            <StarButton itemId={item.id} className="absolute top-3 right-3" />
 
             {next && (item.travel_next_minutes || item.travel_next_mode) ? (
               <p className="mt-2 ml-2 text-[11px] font-bold tracking-wide text-ink/40">
