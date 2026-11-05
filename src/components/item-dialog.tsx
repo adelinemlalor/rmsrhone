@@ -29,6 +29,8 @@ import {
   type Traveler,
 } from "@/lib/travel";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
+import { ConfirmDelete } from "@/components/confirm-dialog";
 
 const field =
   "w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[14px] outline-none focus:border-brand";
@@ -46,6 +48,7 @@ export function ItemDialog({
   authorName,
   authorId,
   onClose,
+  onDeleted,
 }: {
   tripId: string;
   travelers: Traveler[];
@@ -54,6 +57,8 @@ export function ItemDialog({
   authorName: string;
   authorId: string | null;
   onClose: () => void;
+  /** Called after the plan is deleted (e.g. to leave its detail page). */
+  onDeleted?: () => void;
 }) {
   const save = useSaveAgendaItem(tripId);
   const remove = useDeleteAgendaItem(tripId);
@@ -187,6 +192,16 @@ export function ItemDialog({
           <DialogTitle className="font-display text-[22px] font-extrabold tracking-tight">
             {form.id ? "Edit plan" : "Add a plan"}
           </DialogTitle>
+          {form.id ? (
+            <Link
+              to="/trips/$tripId/plans/$planId"
+              params={{ tripId, planId: form.id }}
+              onClick={onClose}
+              className="w-fit text-[12px] font-bold text-brand"
+            >
+              Open full page →
+            </Link>
+          ) : null}
         </DialogHeader>
 
         <div className="flex flex-wrap gap-2 border-b border-border px-6 py-3">
@@ -890,17 +905,20 @@ export function ItemDialog({
 
         <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
           {form.id ? (
-            <button
-              type="button"
-              onClick={async () => {
+            <ConfirmDelete
+              title="Delete this plan?"
+              description={`"${form.title ?? "This plan"}" will be permanently removed from the trip. This can't be undone.`}
+              onConfirm={async () => {
                 await remove.mutateAsync(form.id!);
-                toast.success("Plan removed");
+                toast.success("Plan deleted");
                 onClose();
+                onDeleted?.();
               }}
-              className="text-[13px] font-bold text-destructive"
             >
-              Delete
-            </button>
+              <button type="button" className="text-[13px] font-bold text-destructive">
+                Delete
+              </button>
+            </ConfirmDelete>
           ) : (
             <span />
           )}

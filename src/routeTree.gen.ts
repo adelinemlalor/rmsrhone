@@ -28,6 +28,7 @@ import { Route as AuthenticatedTripsTripIdMapRouteImport } from './routes/_authe
 import { Route as AuthenticatedTripsTripIdSavedRouteImport } from './routes/_authenticated/trips.$tripId.saved'
 import { Route as AuthenticatedTripsTripIdTravelersRouteImport } from './routes/_authenticated/trips.$tripId.travelers'
 import { Route as AuthenticatedTripsTripIdDayDateRouteImport } from './routes/_authenticated/trips.$tripId.day.$date'
+import { Route as AuthenticatedTripsTripIdPlansPlanIdRouteImport } from './routes/_authenticated/trips.$tripId.plans.$planId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -133,6 +134,12 @@ const AuthenticatedTripsTripIdDayDateRoute =
     path: '/day/$date',
     getParentRoute: () => AuthenticatedTripsTripIdRoute,
   } as any)
+const AuthenticatedTripsTripIdPlansPlanIdRoute =
+  AuthenticatedTripsTripIdPlansPlanIdRouteImport.update({
+    id: '/plans/$planId',
+    path: '/plans/$planId',
+    getParentRoute: () => AuthenticatedTripsTripIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
   '/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
   '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
+  '/trips/$tripId/plans/$planId': typeof AuthenticatedTripsTripIdPlansPlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -172,6 +180,7 @@ export interface FileRoutesByTo {
   '/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
   '/trips/$tripId': typeof AuthenticatedTripsTripIdIndexRoute
   '/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
+  '/trips/$tripId/plans/$planId': typeof AuthenticatedTripsTripIdPlansPlanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -194,6 +203,7 @@ export interface FileRoutesById {
   '/_authenticated/trips/$tripId/travelers': typeof AuthenticatedTripsTripIdTravelersRoute
   '/_authenticated/trips/$tripId/': typeof AuthenticatedTripsTripIdIndexRoute
   '/_authenticated/trips/$tripId/day/$date': typeof AuthenticatedTripsTripIdDayDateRoute
+  '/_authenticated/trips/$tripId/plans/$planId': typeof AuthenticatedTripsTripIdPlansPlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/trips/$tripId/travelers'
     | '/trips/$tripId/'
     | '/trips/$tripId/day/$date'
+    | '/trips/$tripId/plans/$planId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/trips/$tripId/travelers'
     | '/trips/$tripId'
     | '/trips/$tripId/day/$date'
+    | '/trips/$tripId/plans/$planId'
   id:
     | '__root__'
     | '/'
@@ -256,6 +268,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trips/$tripId/travelers'
     | '/_authenticated/trips/$tripId/'
     | '/_authenticated/trips/$tripId/day/$date'
+    | '/_authenticated/trips/$tripId/plans/$planId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -399,6 +412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsTripIdDayDateRouteImport
       parentRoute: typeof AuthenticatedTripsTripIdRoute
     }
+    '/_authenticated/trips/$tripId/plans/$planId': {
+      id: '/_authenticated/trips/$tripId/plans/$planId'
+      path: '/plans/$planId'
+      fullPath: '/trips/$tripId/plans/$planId'
+      preLoaderRoute: typeof AuthenticatedTripsTripIdPlansPlanIdRouteImport
+      parentRoute: typeof AuthenticatedTripsTripIdRoute
+    }
   }
 }
 
@@ -412,6 +432,7 @@ interface AuthenticatedTripsTripIdRouteChildren {
   AuthenticatedTripsTripIdTravelersRoute: typeof AuthenticatedTripsTripIdTravelersRoute
   AuthenticatedTripsTripIdIndexRoute: typeof AuthenticatedTripsTripIdIndexRoute
   AuthenticatedTripsTripIdDayDateRoute: typeof AuthenticatedTripsTripIdDayDateRoute
+  AuthenticatedTripsTripIdPlansPlanIdRoute: typeof AuthenticatedTripsTripIdPlansPlanIdRoute
 }
 
 const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildren =
@@ -429,6 +450,8 @@ const AuthenticatedTripsTripIdRouteChildren: AuthenticatedTripsTripIdRouteChildr
       AuthenticatedTripsTripIdTravelersRoute,
     AuthenticatedTripsTripIdIndexRoute: AuthenticatedTripsTripIdIndexRoute,
     AuthenticatedTripsTripIdDayDateRoute: AuthenticatedTripsTripIdDayDateRoute,
+    AuthenticatedTripsTripIdPlansPlanIdRoute:
+      AuthenticatedTripsTripIdPlansPlanIdRoute,
   }
 
 const AuthenticatedTripsTripIdRouteWithChildren =
