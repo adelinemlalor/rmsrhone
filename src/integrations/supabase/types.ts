@@ -554,6 +554,35 @@ export type Database = {
           },
         ]
       }
+      stars: {
+        Row: {
+          agenda_item_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          agenda_item_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          agenda_item_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stars_agenda_item_id_fkey"
+            columns: ["agenda_item_id"]
+            isOneToOne: false
+            referencedRelation: "agenda_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_travelers: {
         Row: {
           color: string
