@@ -21,6 +21,7 @@ import {
 } from "@/lib/travel";
 import { cn } from "@/lib/utils";
 import { ConfirmDelete } from "@/components/confirm-dialog";
+import { RandomPickButton } from "@/components/random-pick-dialog";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 
@@ -151,6 +152,15 @@ function SavedPage() {
             ))}
           </div>
         ) : null}
+
+        <RandomPickButton
+          ideas={shown}
+          days={days}
+          filterLabel={[filter !== "All" ? filter : null, showMeals && mealFilter !== "All" ? mealFilter : null]
+            .filter(Boolean)
+            .join(" · ")}
+          onSchedule={schedule}
+        />
 
         {shown.length === 0 ? (
           <EmptyState
