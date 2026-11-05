@@ -137,7 +137,7 @@ function TripLayout() {
             </span>
             <AvatarStack travelers={travelers ?? []} />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={exportICS}
@@ -166,6 +166,7 @@ function TripLayout() {
             <button
               type="button"
               onClick={() => void router.navigate({ to: "/trips/$tripId/itinerary", params: { tripId } })}
+              data-tour="trip-start"
               className="rounded-full bg-brand px-4 py-2 text-[12px] font-bold text-cream"
             >
               Open itinerary
@@ -180,6 +181,7 @@ function TripLayout() {
             key={t.to}
             to={t.to}
             params={{ tripId }}
+            data-tour={`tab-${t.label.split(" ")[0]!.toLowerCase()}`}
             activeOptions={{ exact: "exact" in t }}
             activeProps={{ className: "border-ink bg-ink text-cream" }}
             className="shrink-0 rounded-full border border-border bg-white/60 px-4 py-2 text-[12px] font-bold whitespace-nowrap text-ink/60"

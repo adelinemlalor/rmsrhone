@@ -47,7 +47,7 @@ function OverviewPage() {
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-5">
         <Panel>
           <SectionLabel>Next up</SectionLabel>
           {upcoming.length === 0 ? (
@@ -110,7 +110,7 @@ function OverviewPage() {
         </Panel>
       </div>
 
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-5">
         <Panel>
           <SectionLabel>Trip pulse</SectionLabel>
           <div className="space-y-4">

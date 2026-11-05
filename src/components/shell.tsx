@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { TourButton } from "@/components/guided-tour";
 
 
 const NAV = [
@@ -57,6 +58,7 @@ export function AppShell({
               <Link
                 key={n.to}
                 to={n.to}
+                data-tour={`nav-${n.label.toLowerCase()}`}
                 activeProps={{ className: "text-brand" }}
                 className="transition-colors hover:text-ink"
               >
@@ -68,10 +70,12 @@ export function AppShell({
           <div className="flex items-center gap-2">
             <Link
               to="/trips/new"
+              data-tour="nav-new-trip"
               className="hidden rounded-full bg-brand px-4 py-2 text-[13px] font-bold whitespace-nowrap text-cream transition-opacity hover:opacity-90 sm:block"
             >
               + New trip
             </Link>
+            <TourButton />
             <Link
               to="/profile"
               title="Traveler profile"
@@ -100,6 +104,7 @@ export function AppShell({
           <Link
             key={n.to}
             to={n.to}
+            data-tour={`nav-${n.label.toLowerCase()}`}
             activeProps={{ className: "text-brand" }}
             className={cn("px-2 py-1 text-[11px] font-bold text-ink/55")}
           >
