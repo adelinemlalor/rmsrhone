@@ -341,6 +341,20 @@ export function toISODate(d: Date): string {
   ).padStart(2, "0")}`;
 }
 
+/**
+ * "Upcoming" = not completed and not over yet. A trip is over once its end date
+ * (or its start date, if it has no end date) is before today. Trips with no
+ * dates yet still count as upcoming — they're still being planned.
+ */
+export function isUpcoming(
+  trip: Pick<Trip, "status" | "start_date" | "end_date">,
+  today: string = toISODate(new Date()),
+): boolean {
+  if (trip.status === "Completed") return false;
+  const lastDay = trip.end_date ?? trip.start_date;
+  return !lastDay || lastDay >= today;
+}
+
 export function tripDates(trip: Pick<Trip, "start_date" | "end_date">): string[] {
   if (!trip.start_date || !trip.end_date) return [];
   const out: string[] = [];

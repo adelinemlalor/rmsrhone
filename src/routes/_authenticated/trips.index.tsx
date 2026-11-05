@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useDeleteTrip, useTrips } from "@/lib/data";
 import { ConfirmDelete } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/bits";
-import { countdownLabel, formatRange, TRIP_STATUSES } from "@/lib/travel";
+import { countdownLabel, formatRange, isUpcoming, TRIP_STATUSES } from "@/lib/travel";
 import type { Trip } from "@/lib/travel";
 import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
@@ -89,7 +89,7 @@ function TripsPage() {
     const active = all.filter((t) => !t.archived);
     if (filter === "All") return active;
     if (filter === "Upcoming")
-      return active.filter((t) => t.status !== "Completed");
+      return active.filter((t) => isUpcoming(t));
     return active.filter((t) => t.status === filter);
   }, [trips, filter]);
 
