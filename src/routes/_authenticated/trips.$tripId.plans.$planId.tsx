@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useAgenda, useDeleteAgendaItem, useTravelers, useTrip } from "@/lib/data";
 import { ItemDialog, type ItemDraft } from "@/components/item-dialog";
 import { ConfirmDelete } from "@/components/confirm-dialog";
+import { StarButton } from "@/components/star-button";
 import { AvatarStack, CategoryIcon, Panel, SectionLabel, StatusPill } from "@/components/bits";
 import { durationLabel, formatDayLong, money, timeRange, type AgendaItem } from "@/lib/travel";
 
@@ -102,6 +103,7 @@ function PlanDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
+          <StarButton itemId={plan.id} withLabel />
           <button
             type="button"
             onClick={() => setDraft(plan)}

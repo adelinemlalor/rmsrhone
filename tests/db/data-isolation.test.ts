@@ -79,6 +79,21 @@ describe("data isolation: User B cannot see or touch User A's data", () => {
     ).rejects.toThrow(/row-level security/);
   });
 
+  test("stars: B can't see A's stars or star a plan on A's trip", async () => {
+    await t.asUser(A.id, A.email, (q) =>
+      q("insert into public.stars (user_id, agenda_item_id) values ($1, $2)", [A.id, planId]),
+    );
+    const bStars = await t.asUser(B.id, B.email, (q) => q("select * from public.stars"));
+    expect(bStars).toHaveLength(0);
+    await expect(
+      t.asUser(B.id, B.email, (q) =>
+        q("insert into public.stars (user_id, agenda_item_id) values ($1, $2)", [B.id, planId]),
+      ),
+    ).rejects.toThrow(/row-level security/);
+    const aStars = await t.asUser(A.id, A.email, (q) => q("select agenda_item_id from public.stars"));
+    expect(aStars).toEqual([{ agenda_item_id: planId }]);
+  });
+
   test("A's plan is unchanged afterwards", async () => {
     const plans = await t.asUser(A.id, A.email, (q) => q("select title from public.agenda_items"));
     expect(plans).toEqual([{ title: "Dinner at Sal Grosso" }]);
