@@ -126,7 +126,7 @@ export function ImportPlanDialog({
   const kept = (plans ?? []).filter((p) => p.keep).length;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={onClose}>
       <div
         className="flex max-h-[90vh] w-full max-w-[720px] flex-col overflow-hidden rounded-[26px] border border-border bg-cream shadow-xl"
         onClick={(e) => e.stopPropagation()}
