@@ -24,6 +24,8 @@ import {
 
 } from "@/lib/data";
 import {
+  CATEGORIES,
+  CATEGORY_ICON,
   STATUSES,
   type AgendaItem,
   type Traveler,
@@ -31,6 +33,16 @@ import {
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { ConfirmDelete } from "@/components/confirm-dialog";
+import { hasErrors, validatePlan, type PlanErrors } from "@/lib/validation";
+
+function FieldError({ message }: { message?: string | undefined }) {
+  if (!message) return null;
+  return (
+    <p role="alert" className="mt-1.5 text-[12px] font-semibold text-destructive">
+      {message}
+    </p>
+  );
+}
 
 const field =
   "w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[14px] outline-none focus:border-brand";
@@ -82,10 +94,12 @@ export function ItemDialog({
   const [pendingLinks, setPendingLinks] = useState<{ label: string; url: string }[]>([]);
   const [pendingDocs, setPendingDocs] = useState<{ name: string; file: File }[]>([]);
   const photoPreview = useImageUrl(form.image_url);
+  const [errors, setErrors] = useState<PlanErrors>({});
 
   useEffect(() => {
     if (draft) {
       setForm({ ...draft });
+      setErrors({});
       setTab("Details");
       setPendingLinks([]);
       setPendingDocs([]);
@@ -97,8 +111,10 @@ export function ItemDialog({
 
   if (!draft) return null;
 
-  const set = <K extends keyof AgendaItem>(key: K, value: AgendaItem[K] | null) =>
+  const set = <K extends keyof AgendaItem>(key: K, value: AgendaItem[K] | null) => {
     setForm((f) => ({ ...f, [key]: value }));
+    if (key in errors) setErrors((e) => ({ ...e, [key]: undefined }));
+  };
 
   const durationMinutes =
     typeof form.details?.["duration_minutes"] === "number"
@@ -120,8 +136,10 @@ export function ItemDialog({
   };
 
   async function submit() {
-    if (!form.title?.trim()) {
-      toast.error("Give this plan a title");
+    const problems = validatePlan(form);
+    setErrors(problems);
+    if (hasErrors(problems)) {
+      setTab("Details");
       return;
     }
     try {
@@ -147,8 +165,8 @@ export function ItemDialog({
         ...form,
         end_time: endTime,
         details,
-        title: form.title.trim(),
-        category: form.category ?? "Activity",
+        title: (form.title ?? "").trim(),
+        category: form.category!,
         status: form.status ?? "Idea",
         currency: form.currency ?? currency,
       });
@@ -232,8 +250,33 @@ export function ItemDialog({
                   value={form.title ?? ""}
                   onChange={(e) => set("title", e.target.value)}
                   placeholder="Dinner at Aprazível"
-                  className={field}
+                  aria-invalid={!!errors.title}
+                  className={cn(field, errors.title && "border-destructive")}
                 />
+                <FieldError message={errors.title} />
+              </div>
+              <div>
+                <label className={label} htmlFor="i-category">
+                  Category
+                </label>
+                <select
+                  id="i-category"
+                  value={form.category ?? ""}
+                  onChange={(e) => set("category", e.target.value)}
+                  aria-invalid={!!errors.category}
+                  className={cn(field, errors.category && "border-destructive")}
+                >
+                  <option value="">Choose a category…</option>
+                  {form.category && !(CATEGORIES as readonly string[]).includes(form.category) ? (
+                    <option value={form.category}>{form.category}</option>
+                  ) : null}
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {CATEGORY_ICON[c] ?? "📍"} {c}
+                    </option>
+                  ))}
+                </select>
+                <FieldError message={errors.category} />
               </div>
               <div>
                 <div className="mb-2 flex items-center justify-between gap-3">
@@ -567,8 +610,10 @@ export function ItemDialog({
                   onChange={(e) =>
                     set("cost_estimated", e.target.value ? Number(e.target.value) : null)
                   }
-                  className={field}
+                  aria-invalid={!!errors.cost_estimated}
+                  className={cn(field, errors.cost_estimated && "border-destructive")}
                 />
+                <FieldError message={errors.cost_estimated} />
               </div>
               <div>
                 <label className={label} htmlFor="i-act">
@@ -582,8 +627,10 @@ export function ItemDialog({
                   onChange={(e) =>
                     set("cost_actual", e.target.value ? Number(e.target.value) : null)
                   }
-                  className={field}
+                  aria-invalid={!!errors.cost_actual}
+                  className={cn(field, errors.cost_actual && "border-destructive")}
                 />
+                <FieldError message={errors.cost_actual} />
               </div>
               <div>
                 <label className={label} htmlFor="i-paidby">
